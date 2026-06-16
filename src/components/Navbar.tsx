@@ -1,18 +1,25 @@
 import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { Sun, Moon } from 'lucide-react'
 import styles from './Navbar.module.css'
 
 const links = [
-  { label: 'Demo', href: '#demo' },
-  { label: 'Features', href: '#features' },
+  { label: 'Demo',         href: '#demo' },
+  { label: 'Features',     href: '#features' },
   { label: 'How it Works', href: '#how-it-works' },
-  { label: 'Shortcuts', href: '#shortcuts' },
-  { label: 'FAQ', href: '#faq' },
+  { label: 'Shortcuts',    href: '#shortcuts' },
+  { label: 'FAQ',          href: '#faq' },
 ]
 
 export default function Navbar() {
-  const [scrolled, setScrolled] = useState(false)
-  const [menuOpen, setMenuOpen] = useState(false)
+  const [scrolled,  setScrolled]  = useState(false)
+  const [menuOpen,  setMenuOpen]  = useState(false)
+  const [isDark,    setIsDark]    = useState(true)
+
+  // Apply theme to <html> on mount & toggle
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light')
+  }, [isDark])
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 30)
@@ -38,7 +45,7 @@ export default function Navbar() {
                 fill="url(#nlg)"/>
               <defs>
                 <linearGradient id="nlg" x1="4" y1="4" x2="28" y2="28" gradientUnits="userSpaceOnUse">
-                  <stop stopColor="#00d9c8"/><stop offset="1" stopColor="#7c3aed"/>
+                  <stop stopColor="#22d3ee"/><stop offset="1" stopColor="#a78bfa"/>
                 </linearGradient>
               </defs>
             </svg>
@@ -54,6 +61,27 @@ export default function Navbar() {
             </li>
           ))}
         </ul>
+
+        {/* Theme toggle */}
+        <motion.button
+          className={styles.themeToggle}
+          onClick={() => setIsDark(d => !d)}
+          whileTap={{ scale: 0.88 }}
+          title={isDark ? 'Switch to light theme' : 'Switch to dark theme'}
+          aria-label="Toggle theme"
+        >
+          <AnimatePresence mode="wait">
+            {isDark ? (
+              <motion.span key="sun" initial={{ opacity:0, rotate:-90 }} animate={{ opacity:1, rotate:0 }} exit={{ opacity:0, rotate:90 }} transition={{ duration: 0.2 }}>
+                <Sun size={16} />
+              </motion.span>
+            ) : (
+              <motion.span key="moon" initial={{ opacity:0, rotate:90 }} animate={{ opacity:1, rotate:0 }} exit={{ opacity:0, rotate:-90 }} transition={{ duration: 0.2 }}>
+                <Moon size={16} />
+              </motion.span>
+            )}
+          </AnimatePresence>
+        </motion.button>
 
         <a href="#download" className={styles.cta}>Download Free</a>
 
@@ -85,6 +113,10 @@ export default function Navbar() {
                 {l.label}
               </a>
             ))}
+            <button className={styles.mobileThemeRow} onClick={() => setIsDark(d => !d)}>
+              {isDark ? <Sun size={15} /> : <Moon size={15} />}
+              {isDark ? 'Switch to Light Theme' : 'Switch to Dark Theme'}
+            </button>
             <a href="#download" className={styles.mobileCta}
               onClick={() => setMenuOpen(false)}>
               Download Free

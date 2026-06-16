@@ -1,0 +1,100 @@
+.section { padding: 100px 24px; }
+.inner { max-width: 1200px; margin: 0 auto; }
+.header { text-align: center; margin-bottom: 56px; }
+.title {
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--text);
+  margin-bottom: 12px;
+}
+.sub { font-size: 1.05rem; color: var(--muted); }
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+.card {
+  background: rgba(10,24,40,0.75);
+  border: 1px solid rgba(0,217,200,0.12);
+  border-radius: var(--radius);
+  padding: 26px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  cursor: default;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+.card:hover {
+  border-color: rgba(0,217,200,0.32);
+  box-shadow: 0 20px 48px rgba(0,0,0,0.3), 0 0 30px rgba(0,217,200,0.05);
+}
+.cardTop {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+.iconBox {
+  width: 44px; height: 44px;
+  border-radius: 12px;
+  background: rgba(0,217,200,0.08);
+  border: 1px solid rgba(0,217,200,0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.iconViolet {
+  background: rgba(124,58,237,0.08);
+  border-color: rgba(124,58,237,0.18);
+}
+.tag {
+  font-size: 0.67rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: rgba(0,217,200,0.75);
+  border: 1px solid rgba(0,217,200,0.2);
+  border-radius: 5px;
+  padding: 3px 8px;
+}
+.tagViolet {
+  color: rgba(167,139,250,0.85);
+  border-color: rgba(124,58,237,0.25);
+}
+.cardTitle {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
+}
+.cardDesc {
+  font-size: 0.86rem;
+  color: var(--muted);
+  line-height: 1.65;
+  flex: 1;
+}
+.cardStatus {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.67rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  color: var(--muted);
+  border-top: 1px solid rgba(255,255,255,0.05);
+  padding-top: 14px;
+  margin-top: auto;
+}
+.statusDot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--cyan);
+  flex-shrink: 0;
+  animation: pulseDot 2s ease infinite;
+}
+.statusViolet { background: #7c3aed; }
+
+@media (max-width: 1024px) { .grid { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 640px)  { .grid { grid-template-columns: 1fr; } }

@@ -771,6 +771,7 @@ html.scroll-snap .experiment-route .section {
   width: 80%;
   max-width: 380px;
   height: auto;
+  aspect-ratio: 290 / 290;
   display: block;
   pointer-events: auto;
   margin-top: -10%;

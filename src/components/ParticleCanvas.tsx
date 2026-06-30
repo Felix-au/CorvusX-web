@@ -1126,7 +1126,7 @@ export default function ParticleCanvas({ settings }: ParticleCanvasProps) {
       // ─── Render Cognitive Function HUD (Only in Section 0) ────────────────
       if (index === 0) {
         const hudX = isMobile ? W * 0.5 : W * 0.72;
-        const hudY = isMobile ? H * 0.78 : H * 0.84;
+        const hudY = H - (isMobile ? 48 : 64); // positioned right above the footer
 
         const isOverloaded = timelineTime < ALL_DRIFTED_TIME;
         const blinkOpacity = 0.35 + Math.abs(Math.sin(now * 0.003)) * 0.65;
@@ -1184,17 +1184,40 @@ export default function ParticleCanvas({ settings }: ParticleCanvasProps) {
       if (index === 0) {
         // Get Logo screen coordinates
         const logoEl = document.querySelector('.hero-experiment-wrapper .hero-logo');
-        let logoX = isMobile ? W * 0.5 : W * 0.25; // fallback center of left 50%
-        let logoY = isMobile ? H * 0.22 : H * 0.5; // fallback center vertically
+        let logoX = isMobile ? W * 0.5 : W * 0.25;
+        let logoY = isMobile ? H * 0.22 : H * 0.5;
         if (logoEl) {
           const rect = logoEl.getBoundingClientRect();
           logoX = rect.left + rect.width / 2;
           logoY = rect.top + rect.height / 2;
         }
 
+        // Calculate logo attraction glow strength (sum of active drift amplitudes)
+        let logoGlowStrength = 0;
+        cards.forEach((card) => {
+          if (card.isLoad && card.redIndex >= 0) {
+            const startTime = START_DRIFT_TIME + card.redIndex * CARD_DRIFT_INTERVAL;
+            const endTime = startTime + DRIFT_DURATION;
+            if (timelineTime > startTime && timelineTime < endTime) {
+              logoGlowStrength += Math.sin(((timelineTime - startTime) / DRIFT_DURATION) * Math.PI);
+            }
+          }
+        });
+        logoGlowStrength = Math.min(1.0, logoGlowStrength);
+
+        // Apply alpha-based silhouette glow directly to logo image
+        const logoImg = logoEl as HTMLImageElement;
+        if (logoImg) {
+          if (logoGlowStrength > 0.01) {
+            logoImg.style.filter = `drop-shadow(0 0 ${logoGlowStrength * 16}px rgba(34, 211, 238, ${logoGlowStrength * 0.65}))`;
+          } else {
+            logoImg.style.filter = '';
+          }
+        }
+
         const hudX = isMobile ? W * 0.5 : W * 0.72;
-        const hudY = isMobile ? H * 0.78 : H * 0.84;
-        const stackYBase = hudY - (isMobile ? 24 : 30);
+        const hudY = H - (isMobile ? 48 : 64);
+        const stackYBase = hudY - (isMobile ? 24 : 32);
 
         // Precalculate stacked card coordinates in horizontally centered rows (5, 5, 3)
         const hGap = isMobile ? 8 : 12;
@@ -1208,17 +1231,15 @@ export default function ParticleCanvas({ settings }: ParticleCanvasProps) {
         ctx!.font = `600 ${Math.round(baseFontSize)}px 'Outfit', 'Inter', system-ui, sans-serif`;
 
         rowIndices.forEach((row, r) => {
-          // Row 2 is bottom, Row 1 is middle, Row 0 is top
           const offsetMultiplier = 2 - r;
           const rowY = stackYBase - offsetMultiplier * (baseRectHeight + vGap);
 
           let rowWidth = 0;
           const cardWidths = row.map((idx) => {
             const txtWidth = ctx!.measureText(cards[idx].text).width;
-            const w = txtWidth + baseFontSize * 1.3;
-            rowWidth += w;
-            return w;
+            return txtWidth + baseFontSize * 1.3;
           });
+          cardWidths.forEach(w => rowWidth += w);
           rowWidth += (row.length - 1) * hGap;
 
           let currentX = hudX - rowWidth / 2;
@@ -1230,6 +1251,27 @@ export default function ParticleCanvas({ settings }: ParticleCanvasProps) {
             };
             currentX += w + hGap;
           });
+        });
+
+        // Precalculate final collapsed coordinates for green cards (indices 1, 3, 5, 7, 9) in a single centered row
+        const greenRowIndices = [1, 3, 5, 7, 9];
+        let greenRowWidth = 0;
+        const greenCardWidths = greenRowIndices.map((idx) => {
+          const txtWidth = ctx!.measureText(cards[idx].text).width;
+          return txtWidth + baseFontSize * 1.3;
+        });
+        greenCardWidths.forEach(w => greenRowWidth += w);
+        greenRowWidth += (greenRowIndices.length - 1) * hGap;
+
+        let greenCurrentX = hudX - greenRowWidth / 2;
+        const finalStackCoords: { [idx: number]: { x: number; y: number } } = {};
+        greenRowIndices.forEach((idx, colIndex) => {
+          const w = greenCardWidths[colIndex];
+          finalStackCoords[idx] = {
+            x: greenCurrentX + w / 2,
+            y: stackYBase - 4 // settle slightly lower, directly above HUD
+          };
+          greenCurrentX += w + hGap;
         });
 
         cards.forEach((card, i) => {
@@ -1250,8 +1292,16 @@ export default function ParticleCanvas({ settings }: ParticleCanvasProps) {
           const easeT = t_card * t_card * (3 - 2 * t_card);
 
           // Get coordinates
-          const stackX = stackCoords[i].x;
-          const stackY = stackCoords[i].y;
+          let stackX = stackCoords[i].x;
+          let stackY = stackCoords[i].y;
+
+          // If it is a green card, collapse its stack coordinate over time to a single centered row
+          if (!card.isLoad && finalStackCoords[i]) {
+            const stackProgress = Math.min(1.0, timelineTime / ALL_DRIFTED_TIME);
+            const easeStack = stackProgress * stackProgress * (3 - 2 * stackProgress);
+            stackX = lerp(stackCoords[i].x, finalStackCoords[i].x, easeStack);
+            stackY = lerp(stackCoords[i].y, finalStackCoords[i].y, easeStack);
+          }
 
           // Position orbiting the logo
           const theta = card.angle + timelineTime * 0.001;
@@ -1280,9 +1330,21 @@ export default function ParticleCanvas({ settings }: ParticleCanvasProps) {
             // Fade out when scrolling past first section
             ctx!.globalAlpha = (1.0 - t) * settingsRef.current.particleOpacity;
 
+            // Drifting cards glow cyan, stack and orbit cards use default colors
+            const isDrifting = t_card > 0.0 && t_card < 1.0;
+
+            // Border glow for drifting cards
+            if (isDrifting) {
+              ctx!.shadowColor = "#22d3ee";
+              ctx!.shadowBlur = 8 * Math.sin(Math.PI * t_card);
+            }
+
             // Background rounded rect
             ctx!.fillStyle = theme === "black" ? "rgba(10, 10, 12, 0.78)" : "rgba(255, 255, 255, 0.88)";
-            ctx!.strokeStyle = card.isLoad ? "rgba(239, 68, 68, 0.35)" : "rgba(34, 197, 94, 0.35)";
+            ctx!.strokeStyle = isDrifting 
+              ? `rgba(34, 211, 238, ${0.35 + Math.sin(Math.PI * t_card) * 0.35})` 
+              : (card.isLoad ? "rgba(239, 68, 68, 0.35)" : "rgba(34, 197, 94, 0.35)");
+            
             ctx!.lineWidth = 1.0;
             ctx!.beginPath();
             ctx!.roundRect(rx, ry, rectWidth, rectHeight, fontSize * 0.5);
@@ -1290,7 +1352,7 @@ export default function ParticleCanvas({ settings }: ParticleCanvasProps) {
             ctx!.stroke();
 
             // Text
-            ctx!.fillStyle = card.isLoad ? "#f87171" : "#4ade80";
+            ctx!.fillStyle = isDrifting ? "#22d3ee" : (card.isLoad ? "#f87171" : "#4ade80");
             ctx!.textBaseline = "middle";
             ctx!.textAlign = "center";
             ctx!.fillText(card.text, screenX, screenY + 0.5);

@@ -84,7 +84,6 @@ export default function Navbar({ isDark: propIsDark, onThemeToggle }: NavbarProp
             </AnimatePresence>
           </motion.button>
 
-          <a href="#download" className={styles.cta}>Download Free</a>
 
           {/* Hamburger */}
           <button
@@ -118,10 +117,7 @@ export default function Navbar({ isDark: propIsDark, onThemeToggle }: NavbarProp
                 {isDark ? <Sun size={15} /> : <Moon size={15} />}
                 {isDark ? 'Switch to Light Theme' : 'Switch to Dark Theme'}
               </button>
-              <a href="#download" className={styles.mobileCta}
-                onClick={() => setMenuOpen(false)}>
-                Download Free
-              </a>
+
             </motion.div>
           )}
         </AnimatePresence>

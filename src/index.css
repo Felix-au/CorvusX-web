@@ -695,7 +695,7 @@ html.scroll-snap .experiment-route .section {
   animation: pulseDot 2s ease infinite;
 }
 
-.experiment-route .hero-subtext {
+.experiment-route .hero-content p.hero-subtext {
   font-size: 0.65rem;
   line-height: 1.6;
   color: var(--text-muted);

@@ -100,10 +100,6 @@ export default function Experiment() {
                   <span className="badge-dot" />
                   Stealth AI · Always On Top · Invisible to Screen Recorders
                 </div>
-                <h1>
-                  Intelligence<br />
-                  <span className="gradient-text">in the Shadows</span>
-                </h1>
                 <p className="hero-subtext">
                   A premium, invisible overlay that sits silently above every app — providing real-time AI reasoning,
                   screenshot analysis, voice intelligence, and ghost typing during your most critical moments.

@@ -644,9 +644,9 @@ html.scroll-snap .experiment-route .section {
 }
 
 .experiment-route .hero-logo {
-  height: 68px;
+  height: clamp(80px, 12vw, 128px);
   width: auto;
-  margin-bottom: -4px;
+  margin-bottom: -8px;
   display: block;
 }
 
@@ -673,26 +673,11 @@ html.scroll-snap .experiment-route .section {
   animation: pulseDot 2s ease infinite;
 }
 
-.experiment-route h1 {
-  font-size: clamp(2.2rem, 5vw, 4.5rem);
-  font-weight: 800;
-  margin: 0;
-  line-height: 1.1;
-  letter-spacing: -0.03em;
-  color: var(--text-color);
-}
-
-.experiment-route .gradient-text {
-  background: linear-gradient(135deg, #22d3ee 0%, #a78bfa 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
 .experiment-route .hero-subtext {
-  font-size: clamp(0.95rem, 1.8vw, 1.15rem);
+  font-size: 0.92rem;
   line-height: 1.6;
   color: var(--text-muted);
+  max-width: 480px;
   font-weight: 300;
   margin: 0;
 }

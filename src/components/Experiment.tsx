@@ -77,7 +77,7 @@ export default function Experiment() {
       <ParticleCanvas settings={settings} />
 
       {/* Scroll Indicators Sidebar */}
-      <div className="scroll-indicator-bar">
+      <div className={`scroll-indicator-bar ${activeSection === 0 ? "first-slide" : ""}`}>
         {shapesMetadata.map((shapeName, index) => (
           <div
             key={index}
@@ -96,27 +96,6 @@ export default function Experiment() {
               <Navbar isDark={theme === "black"} onThemeToggle={(dark) => setTheme(dark ? "black" : "white")} />
               <div className="hero-experiment-wrapper">
                 <img src={theme === "black" ? darkLogo : lightLogo} className="hero-logo" alt="CorvusX Logo" />
-                <div className="badge-wrapper">
-                  <span className="badge-dot" />
-                  Stealth AI · Always On Top · Invisible to Screen Recorders
-                </div>
-                <p className="hero-subtext">
-                  A premium, invisible overlay that sits silently above every app — providing real-time AI reasoning,
-                  screenshot analysis, voice intelligence, and ghost typing during your most critical moments.
-                </p>
-                <div className="hero-actions">
-                  <a href="#download" className="btn-primary" id="hero-download-btn">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                      <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
-                      <polyline points="7 10 12 15 17 10"/>
-                      <line x1="12" y1="15" x2="12" y2="3"/>
-                    </svg>
-                    Download for Windows
-                  </a>
-                </div>
-                <p className="hero-meta">
-                  Free · Open Source · Gemini + OmniKey Powered
-                </p>
               </div>
             </section>
           );

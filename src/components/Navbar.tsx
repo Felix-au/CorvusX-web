@@ -51,9 +51,10 @@ export default function Navbar({ isDark: propIsDark, onThemeToggle }: NavbarProp
     >
       <nav className={`${styles.navbar} ${scrolled ? styles.scrolled : ''}`}>
         <div className={styles.inner}>
-
-
-          {/* Desktop links */}
+          {/* Branding Heading */}
+          <a href="#" className={styles.logo}>
+            <span>CorvusX</span>
+          </a>
           <ul className={styles.links}>
             {links.map(l => (
               <li key={l.href}>

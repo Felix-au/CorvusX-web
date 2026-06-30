@@ -16,9 +16,9 @@
   width: 100%;
   max-width: 100%;
   padding: 14px 0;
-  border-radius: 0;
+  border-radius: 0 0 16px 16px;
   background: var(--glass-bg);
-  border: none;
+  border: 1px solid transparent;
   border-bottom: 1px solid var(--glass-border);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);

@@ -97,12 +97,9 @@ export default function Experiment() {
                 <div className="hero-content">
                   <div className="badge-wrapper">
                     <span className="badge-dot" />
-                    <span>STEALTH DESKTOP AI</span>
+                    <span>Undetectable AI</span>
                   </div>
                   <img src={darkLogo} className="hero-logo" alt="CorvusX Logo" />
-                  <p className="hero-subtext">
-                    CorvusX is an AI-powered desktop assistant designed to help you think clearly, solve optimally, and perform with absolute confidence.
-                  </p>
                   <div className="hero-actions">
                     <a
                       href="https://github.com/Felix-au/CorvusX-Intelligence-in-the-Shadows/releases/latest"
@@ -110,7 +107,7 @@ export default function Experiment() {
                       target="_blank"
                       rel="noopener noreferrer"
                     >
-                      <span>Download Latest Release</span>
+                      <span>Download</span>
                     </a>
                   </div>
                 </div>

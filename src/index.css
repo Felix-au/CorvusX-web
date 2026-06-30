@@ -656,7 +656,7 @@ html.scroll-snap .experiment-route .section {
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: 20px;
+  gap: 8px;
   padding: 0 10%;
   width: 100%;
   max-width: 520px;

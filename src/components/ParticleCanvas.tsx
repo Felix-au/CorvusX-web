@@ -638,32 +638,30 @@ export default function ParticleCanvas({ settings }: ParticleCanvasProps) {
 
     let lastFrameTime = Date.now();
     let currentScrollRatio = 0;
+    let timelineTime = 0;
     const localTimes = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
     let animId: number;
 
     interface CardData {
       text: string;
-      angle: number;
-      radiusOffset: number;
-      speed: number;
       isLoad: boolean;
-      yOffset: number;
+      redIndex: number; // 0 to 7 for red cards, -1 for green cards
+      angle: number;
     }
     const cards: CardData[] = [
-      { text: "Syntax", angle: 0, radiusOffset: 1.0, speed: 0.008, isLoad: true, yOffset: -30 },
-      { text: "Formula", angle: Math.PI * 0.4, radiusOffset: 1.15, speed: 0.006, isLoad: true, yOffset: 40 },
-      { text: "API Docs", angle: Math.PI * 0.8, radiusOffset: 0.9, speed: 0.007, isLoad: true, yOffset: -50 },
-      { text: "Dates", angle: Math.PI * 1.2, radiusOffset: 1.05, speed: 0.005, isLoad: true, yOffset: 20 },
-      { text: "Commands", angle: Math.PI * 1.6, radiusOffset: 1.2, speed: 0.009, isLoad: true, yOffset: -10 },
-      { text: "References", angle: Math.PI * 0.2, radiusOffset: 0.95, speed: 0.004, isLoad: true, yOffset: 60 },
-      { text: "Error Codes", angle: Math.PI * 0.7, radiusOffset: 1.1, speed: 0.008, isLoad: true, yOffset: -40 },
-      { text: "Shortcuts", angle: Math.PI * 1.3, radiusOffset: 1.0, speed: 0.007, isLoad: true, yOffset: 15 },
-      
-      { text: "Creativity", angle: Math.PI * 0.1, radiusOffset: 1.05, speed: 0.005, isLoad: false, yOffset: -25 },
-      { text: "Reasoning", angle: Math.PI * 0.5, radiusOffset: 0.9, speed: 0.004, isLoad: false, yOffset: 45 },
-      { text: "Strategy", angle: Math.PI * 0.9, radiusOffset: 1.15, speed: 0.006, isLoad: false, yOffset: -35 },
-      { text: "Concepts", angle: Math.PI * 1.4, radiusOffset: 1.0, speed: 0.005, isLoad: false, yOffset: 35 },
-      { text: "Problem Solving", angle: Math.PI * 1.8, radiusOffset: 1.2, speed: 0.004, isLoad: false, yOffset: -15 }
+      { text: "Syntax", isLoad: true, redIndex: 0, angle: 0 },
+      { text: "Creativity", isLoad: false, redIndex: -1, angle: Math.PI * 0.15 },
+      { text: "Formula", isLoad: true, redIndex: 1, angle: Math.PI * 0.4 },
+      { text: "Reasoning", isLoad: false, redIndex: -1, angle: Math.PI * 0.55 },
+      { text: "API Docs", isLoad: true, redIndex: 2, angle: Math.PI * 0.8 },
+      { text: "Strategy", isLoad: false, redIndex: -1, angle: Math.PI * 0.95 },
+      { text: "Dates", isLoad: true, redIndex: 3, angle: Math.PI * 1.2 },
+      { text: "Concepts", isLoad: false, redIndex: -1, angle: Math.PI * 1.35 },
+      { text: "Commands", isLoad: true, redIndex: 4, angle: Math.PI * 1.6 },
+      { text: "Problem Solving", isLoad: false, redIndex: -1, angle: Math.PI * 1.75 },
+      { text: "References", isLoad: true, redIndex: 5, angle: Math.PI * 0.25 },
+      { text: "Error Codes", isLoad: true, redIndex: 6, angle: Math.PI * 0.65 },
+      { text: "Shortcuts", isLoad: true, redIndex: 7, angle: Math.PI * 1.1 }
     ];
 
     const neuralWaves: { progress: number; speed: number; intensity: number }[] = [];
@@ -674,6 +672,7 @@ export default function ParticleCanvas({ settings }: ParticleCanvasProps) {
       const now = Date.now();
       const delta = now - lastFrameTime;
       lastFrameTime = now;
+      timelineTime += delta;
 
       const scrollTop = window.scrollY || document.documentElement.scrollTop;
       const scrollHeight =
@@ -902,15 +901,21 @@ export default function ParticleCanvas({ settings }: ParticleCanvasProps) {
       const rotateX = lerp(rx1, rx2, t);
       const rotateZ = lerp(rz1, rz2, t);
 
-      // Brain active factor determines how much we are showing the brain slide (section 0)
-      const brainActiveFactor = index === 0 ? (1.0 - t) : 0;
+      // Timeline constants for cards and brain activation
+      const START_DRIFT_TIME = 2000;
+      const CARD_DRIFT_INTERVAL = 600;
+      const DRIFT_DURATION = 1500;
+      const ALL_DRIFTED_TIME = START_DRIFT_TIME + 7 * CARD_DRIFT_INTERVAL + DRIFT_DURATION; // 7700ms
+
+      const brainTransitionT = Math.min(1.0, Math.max(0.0, (timelineTime - ALL_DRIFTED_TIME) / 1000));
+      const brainActiveFactor = (index === 0 ? (1.0 - t) : 0) * brainTransitionT;
 
       // Dim, slow brain pulse on size and opacity
       const pulseSizeFactor = 1.0 + Math.sin(now * 0.002) * 0.12 * brainActiveFactor;
       const pulseOpacityFactor = 1.0 + Math.sin(now * 0.002) * 0.18 * brainActiveFactor;
 
-      // Spawn neural waves if brain is active
-      if (index === 0 && now - lastWaveSpawn > 800) {
+      // Spawn neural waves if brain is active and fully transitioned
+      if (index === 0 && brainTransitionT > 0.0 && now - lastWaveSpawn > 800) {
         neuralWaves.push({ progress: 0.0, speed: 0.025, intensity: 1.2 });
         lastWaveSpawn = now;
       }
@@ -1118,96 +1123,144 @@ export default function ParticleCanvas({ settings }: ParticleCanvasProps) {
         });
       }
 
-      // ─── Render Orbiting Cards ───────────────────────────────────────────
-      // Get Logo screen coordinates
-      const logoEl = document.querySelector('.hero-experiment-wrapper .hero-logo');
-      let logoX = isMobile ? W * 0.5 : W * 0.25; // fallback center of left 50%
-      let logoY = isMobile ? H * 0.22 : H * 0.5; // fallback center vertically
-      if (logoEl) {
-        const rect = logoEl.getBoundingClientRect();
-        logoX = rect.left + rect.width / 2;
-        logoY = rect.top + rect.height / 2;
+      // ─── Render Cognitive Function HUD (Only in Section 0) ────────────────
+      if (index === 0) {
+        const hudX = isMobile ? W * 0.5 : W * 0.72;
+        const hudY = isMobile ? H * 0.78 : H * 0.84;
+
+        const isOverloaded = timelineTime < ALL_DRIFTED_TIME;
+        const blinkOpacity = 0.35 + Math.abs(Math.sin(now * 0.003)) * 0.65;
+        const dotColor = isOverloaded ? `rgba(239, 68, 68, ${blinkOpacity})` : `rgba(34, 197, 94, ${blinkOpacity})`;
+        const dotGlowColor = isOverloaded ? `rgba(239, 68, 68, ${blinkOpacity * 0.4})` : `rgba(34, 197, 94, ${blinkOpacity * 0.4})`;
+        
+        const statusText = isOverloaded ? "OVERLOAD" : "OPTIMAL";
+        const statusColor = isOverloaded ? "#ef4444" : "#22c55e";
+
+        // Draw HUD container background
+        ctx!.font = `600 ${isMobile ? 10 : 12}px 'Outfit', 'Inter', system-ui, sans-serif`;
+        const hudLabel = "Cognitive Function: ";
+        const labelWidth = ctx!.measureText(hudLabel).width;
+        const statusWidth = ctx!.measureText(statusText).width;
+        const hudTotalWidth = 24 + labelWidth + statusWidth;
+        const hudHeight = isMobile ? 24 : 28;
+
+        const hx = hudX - hudTotalWidth / 2;
+        const hy = hudY - hudHeight / 2;
+
+        ctx!.globalAlpha = (1.0 - t) * settingsRef.current.particleOpacity;
+        ctx!.fillStyle = theme === "black" ? "rgba(10, 10, 12, 0.75)" : "rgba(255, 255, 255, 0.85)";
+        ctx!.strokeStyle = theme === "black" ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.08)";
+        ctx!.beginPath();
+        ctx!.roundRect(hx, hy, hudTotalWidth, hudHeight, hudHeight * 0.5);
+        ctx!.fill();
+        ctx!.stroke();
+
+        // Draw Blinking Dot
+        ctx!.fillStyle = dotColor;
+        ctx!.beginPath();
+        ctx!.arc(hx + 12, hudY, isMobile ? 3 : 4, 0, Math.PI * 2);
+        ctx!.fill();
+        // Dot Glow
+        ctx!.shadowColor = isOverloaded ? "#ef4444" : "#22c55e";
+        ctx!.shadowBlur = 8;
+        ctx!.fillStyle = dotGlowColor;
+        ctx!.beginPath();
+        ctx!.arc(hx + 12, hudY, isMobile ? 5 : 6, 0, Math.PI * 2);
+        ctx!.fill();
+        ctx!.shadowBlur = 0; // reset
+
+        // Draw Label Text
+        ctx!.fillStyle = theme === "black" ? "#9ca3af" : "#4b5563";
+        ctx!.textBaseline = "middle";
+        ctx!.textAlign = "left";
+        ctx!.fillText(hudLabel, hx + 22, hudY);
+
+        // Draw Status Value
+        ctx!.fillStyle = statusColor;
+        ctx!.fillText(statusText, hx + 22 + labelWidth, hudY);
       }
 
-      // Calculate transition factor (smoothly morph from brain to logo over scroll ratio 0.0 -> 0.1)
-      const t_transition = Math.min(1.0, currentScrollRatio / 0.1);
-      // Smoothstep easing
-      const easeT = t_transition * t_transition * (3 - 2 * t_transition);
-
-      const brainCenterX = configs[0].cx;
-      const brainCenterY = configs[0].cy;
-      const currentScale = configs[0].scale;
-
-      const targetCenterX = lerp(brainCenterX, logoX, easeT);
-      const targetCenterY = lerp(brainCenterY, logoY, easeT);
-      const targetRadius3D = lerp(0.72, isMobile ? 35 : 55, easeT);
-      const currentScaleFactor = lerp(currentScale, 1.0, easeT);
-      const targetFontSize = lerp(isMobile ? 10 : 13, isMobile ? 6 : 8, easeT);
-
-      // Render cards
-      cards.forEach((card) => {
-        // Update angle
-        card.angle += card.speed;
-
-        const targetY3D = lerp(card.yOffset / currentScale, (card.yOffset * 0.22) / 1.0, easeT);
-
-        // Position coordinates in 3D relative to the target center
-        const x = Math.cos(card.angle) * targetRadius3D * card.radiusOffset;
-        const z = Math.sin(card.angle) * targetRadius3D * card.radiusOffset;
-        const y = targetY3D;
-
-        // Use rotation matrices of active state
-        const cosY = Math.cos(rotateY);
-        const sinY = Math.sin(rotateY);
-        const cx1 = x * cosY - z * sinY;
-        const cz1 = x * sinY + z * cosY;
-
-        const cosX = Math.cos(rotateX);
-        const sinX = Math.sin(rotateX);
-        const cy1 = y * cosX - cz1 * sinX;
-        const cz2 = y * sinX + cz1 * cosX;
-
-        const cosZ = Math.cos(rotateZ);
-        const sinZ = Math.sin(rotateZ);
-        const cx2 = cx1 * cosZ - cy1 * sinZ;
-        const cy2 = cx1 * sinZ + cy1 * cosZ;
-
-        // Perspective projection
-        const fov = 400;
-        const perspective = fov / Math.max(50, fov + cz2 * 250);
-        const screenX = targetCenterX + cx2 * currentScaleFactor * perspective;
-        const screenY = targetCenterY - cy2 * currentScaleFactor * perspective;
-
-        // Draw card if it's on screen
-        if (screenX >= -100 && screenX <= W + 100 && screenY >= -100 && screenY <= H + 100) {
-          ctx!.font = `600 ${Math.round(targetFontSize)}px 'Outfit', 'Inter', system-ui, sans-serif`;
-          const textWidth = ctx!.measureText(card.text).width;
-          const px = targetFontSize * 0.7;
-          const py = targetFontSize * 0.45;
-          const rectWidth = textWidth + px * 2;
-          const rectHeight = targetFontSize + py * 2;
-
-          const rx = screenX - rectWidth / 2;
-          const ry = screenY - rectHeight / 2;
-
-          ctx!.globalAlpha = (1.0 - easeT * 0.3) * settingsRef.current.particleOpacity;
-          
-          // Background rounded rect
-          ctx!.fillStyle = theme === "black" ? "rgba(10, 10, 12, 0.78)" : "rgba(255, 255, 255, 0.88)";
-          ctx!.strokeStyle = card.isLoad ? "rgba(34, 211, 238, 0.35)" : "rgba(139, 92, 246, 0.35)";
-          ctx!.lineWidth = 1.0;
-          ctx!.beginPath();
-          ctx!.roundRect(rx, ry, rectWidth, rectHeight, targetFontSize * 0.5);
-          ctx!.fill();
-          ctx!.stroke();
-
-          // Draw Text
-          ctx!.fillStyle = card.isLoad ? "#22d3ee" : "#a78bfa";
-          ctx!.textBaseline = "middle";
-          ctx!.textAlign = "center";
-          ctx!.fillText(card.text, screenX, screenY + 0.5);
+      // ─── Render Orbiting/Stacked Cards (Only in Section 0) ───────────────
+      if (index === 0) {
+        // Get Logo screen coordinates
+        const logoEl = document.querySelector('.hero-experiment-wrapper .hero-logo');
+        let logoX = isMobile ? W * 0.5 : W * 0.25; // fallback center of left 50%
+        let logoY = isMobile ? H * 0.22 : H * 0.5; // fallback center vertically
+        if (logoEl) {
+          const rect = logoEl.getBoundingClientRect();
+          logoX = rect.left + rect.width / 2;
+          logoY = rect.top + rect.height / 2;
         }
-      });
+
+        const hudX = isMobile ? W * 0.5 : W * 0.72;
+        const hudY = isMobile ? H * 0.78 : H * 0.84;
+        const stackX = hudX;
+        const stackYBase = hudY - (isMobile ? 24 : 30);
+
+        cards.forEach((card, i) => {
+          let t_card = 0.0;
+
+          // If it is a load card (redIndex >= 0), it drifts based on its timeline slot
+          if (card.isLoad && card.redIndex >= 0) {
+            const startTime = START_DRIFT_TIME + card.redIndex * CARD_DRIFT_INTERVAL;
+            const endTime = startTime + DRIFT_DURATION;
+            if (timelineTime >= endTime) {
+              t_card = 1.0;
+            } else if (timelineTime > startTime) {
+              t_card = (timelineTime - startTime) / DRIFT_DURATION;
+            }
+          }
+
+          // Smoothstep easing
+          const easeT = t_card * t_card * (3 - 2 * t_card);
+
+          // Position in stack
+          const stackY = stackYBase - i * (isMobile ? 22 : 26);
+
+          // Position orbiting the logo
+          const theta = card.angle + timelineTime * 0.001;
+          const orbitRadius = isMobile ? 32 : 52;
+          const orbitX = logoX + Math.cos(theta) * orbitRadius;
+          const orbitY = logoY + Math.sin(theta) * orbitRadius * 0.65; // slightly squashed vertically
+
+          // Interpolated screen coordinates
+          const screenX = lerp(stackX, orbitX, easeT);
+          const screenY = lerp(stackY, orbitY, easeT);
+
+          const fontSize = lerp(isMobile ? 9.5 : 12, isMobile ? 6 : 8, easeT);
+
+          // Draw card if it is on screen
+          if (screenX >= -100 && screenX <= W + 100 && screenY >= -100 && screenY <= H + 100) {
+            ctx!.font = `600 ${Math.round(fontSize)}px 'Outfit', 'Inter', system-ui, sans-serif`;
+            const textWidth = ctx!.measureText(card.text).width;
+            const px = fontSize * 0.65;
+            const py = fontSize * 0.45;
+            const rectWidth = textWidth + px * 2;
+            const rectHeight = fontSize + py * 2;
+
+            const rx = screenX - rectWidth / 2;
+            const ry = screenY - rectHeight / 2;
+
+            // Fade out when scrolling past first section
+            ctx!.globalAlpha = (1.0 - t) * settingsRef.current.particleOpacity;
+
+            // Background rounded rect
+            ctx!.fillStyle = theme === "black" ? "rgba(10, 10, 12, 0.78)" : "rgba(255, 255, 255, 0.88)";
+            ctx!.strokeStyle = card.isLoad ? "rgba(239, 68, 68, 0.35)" : "rgba(34, 197, 94, 0.35)";
+            ctx!.lineWidth = 1.0;
+            ctx!.beginPath();
+            ctx!.roundRect(rx, ry, rectWidth, rectHeight, fontSize * 0.5);
+            ctx!.fill();
+            ctx!.stroke();
+
+            // Text
+            ctx!.fillStyle = card.isLoad ? "#f87171" : "#4ade80";
+            ctx!.textBaseline = "middle";
+            ctx!.textAlign = "center";
+            ctx!.fillText(card.text, screenX, screenY + 0.5);
+          }
+        });
+      }
 
       ctx!.globalAlpha = 1.0;
       animId = requestAnimationFrame(animate);

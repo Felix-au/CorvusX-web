@@ -675,7 +675,7 @@ export default function ParticleCanvas({ settings }: ParticleCanvasProps) {
       }) as [string, string, string, string];
       const stiffnessMultiplier = settingsRef.current.springStiffness / 0.03;
       const dampingMultiplier = settingsRef.current.damping / 0.90;
-      const sizeMultiplier = settingsRef.current.particleSize / 3.0;
+      const sizeMultiplier = (settingsRef.current.particleSize / 3.0) * (isMobile ? 0.90 : 1.0);
 
       // ─── Sprite Cache Sync ────────────────────────────────────────────────
       let colorsChanged = false;
@@ -719,17 +719,17 @@ export default function ParticleCanvas({ settings }: ParticleCanvasProps) {
       }
 
       const configs = [
-        { cx: isMobile ? W * 0.5 : W * 0.72, cy: H * 0.5, scale: isMobile ? 400 : 550 }, // Brain (Right)
-        { cx: isMobile ? W * 0.5 : W * 0.5, cy: H * 0.5, scale: isMobile ? 320 : 445 },  // Scattered (Center)
-        { cx: isMobile ? W * 0.5 : W * 0.72, cy: H * 0.5, scale: isMobile ? 300 : 420 }, // DNA Helix (Right)
-        { cx: isMobile ? W * 0.5 : W * 0.28, cy: H * 0.5, scale: isMobile ? 300 : 420 }, // Octahedron (Left)
-        { cx: isMobile ? W * 0.5 : W * 0.72, cy: H * 0.5, scale: isMobile ? 220 : 330 }, // Cube (Right)
-        { cx: isMobile ? W * 0.5 : W * 0.28, cy: H * 0.5, scale: isMobile ? 240 : 360 }, // Torus (Left, rotated sideways)
-        { cx: isMobile ? W * 0.5 : W * 0.72, cy: H * 0.5, scale: isMobile ? 300 : 420 }, // Trefoil Knot (Right)
-        { cx: isMobile ? W * 0.5 : W * 0.28, cy: H * 0.5, scale: isMobile ? 300 : 420 }, // Astroid Star (Left)
-        { cx: isMobile ? W * 0.5 : W * 0.28, cy: H * 0.5, scale: isMobile ? 320 : 445 }, // Email Envelope (Left)
-        { cx: isMobile ? W * 0.5 : W * 0.5, cy: H * 0.5, scale: isMobile ? 380 : 520 },  // Sphere (Center)
-        { cx: isMobile ? W * 0.5 : W * 0.28, cy: H * 0.5, scale: isMobile ? 320 : 445 }, // Lightbulb (Left)
+        { cx: isMobile ? W * 0.5 : W * 0.72, cy: H * 0.5, scale: isMobile ? 360 : 550 }, // Brain (Right)
+        { cx: isMobile ? W * 0.5 : W * 0.5, cy: H * 0.5, scale: isMobile ? 288 : 445 },  // Scattered (Center)
+        { cx: isMobile ? W * 0.5 : W * 0.72, cy: H * 0.5, scale: isMobile ? 270 : 420 }, // DNA Helix (Right)
+        { cx: isMobile ? W * 0.5 : W * 0.28, cy: H * 0.5, scale: isMobile ? 270 : 388.5 }, // Octahedron (Left) - Desktop reduced by 7.5%
+        { cx: isMobile ? W * 0.5 : W * 0.72, cy: H * 0.5, scale: isMobile ? 198 : 330 }, // Cube (Right)
+        { cx: isMobile ? W * 0.5 : W * 0.28, cy: H * 0.5, scale: isMobile ? 216 : 356.4 }, // Torus (Left, rotated sideways) - Desktop reduced by 1%
+        { cx: isMobile ? W * 0.5 : W * 0.72, cy: H * 0.5, scale: isMobile ? 270 : 315 }, // Trefoil Knot (Right) - Desktop reduced by 25%
+        { cx: isMobile ? W * 0.5 : W * 0.28, cy: H * 0.5, scale: isMobile ? 270 : 357 }, // Astroid Star (Left) - Desktop reduced by 15%
+        { cx: isMobile ? W * 0.5 : W * 0.28, cy: H * 0.5, scale: isMobile ? 288 : 445 }, // Email Envelope (Left)
+        { cx: isMobile ? W * 0.5 : W * 0.5, cy: H * 0.5, scale: isMobile ? 342 : 520 },  // Sphere (Center)
+        { cx: isMobile ? W * 0.5 : W * 0.28, cy: H * 0.5, scale: isMobile ? 288 : 445 }, // Lightbulb (Left)
       ];
 
       // ─── Math for Multisection Morphing ──────────────────────────────────
@@ -827,6 +827,24 @@ export default function ParticleCanvas({ settings }: ParticleCanvasProps) {
         { rx: 0, ry: 0, rz: 0 },         // 9: Sphere
         { rx: 0, ry: -0.5236, rz: 0 }    // 10: Lightbulb
       ];
+
+      const desktopSizeReductions = [
+        1.0,   // 0: Brain
+        1.0,   // 1: Scattered
+        1.0,   // 2: DNA
+        0.925, // 3: Octahedron (7.5% reduction)
+        1.0,   // 4: Cube
+        0.99,  // 5: Torus (1% reduction)
+        0.75,  // 6: Trefoil (25% reduction)
+        0.85,  // 7: Astroid (15% reduction)
+        1.0,   // 8: Envelope
+        1.0,   // 9: Sphere
+        1.0    // 10: Lightbulb
+      ];
+
+      const r1_size = desktopSizeReductions[index];
+      const r2_size = desktopSizeReductions[index + 1] || r1_size;
+      const desktopSizeScale = isMobile ? 1.0 : lerp(r1_size, r2_size, t);
 
       // Update local timers for all shapes based on active/inactive states
       for (let i = 0; i < 11; i++) {
@@ -947,7 +965,7 @@ export default function ParticleCanvas({ settings }: ParticleCanvasProps) {
         if (p.shape !== "circle") continue;
 
         ctx!.globalAlpha = p.opacity * settingsRef.current.particleOpacity;
-        const size = p.size * p.scaleFactor * sizeMultiplier;
+        const size = p.size * p.scaleFactor * sizeMultiplier * desktopSizeScale;
         const colorHex = currentColors[p.colorIndex];
         const sprite = sprites[colorHex];
         if (sprite) {
@@ -977,7 +995,7 @@ export default function ParticleCanvas({ settings }: ParticleCanvasProps) {
             const p = particles[i];
             if (p.colorIndex !== c || p.shape !== shape) continue;
 
-            const size = p.size * p.scaleFactor * sizeMultiplier;
+            const size = p.size * p.scaleFactor * sizeMultiplier * desktopSizeScale;
             const halfSize = size / 2;
 
             switch (shape) {

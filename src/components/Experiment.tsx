@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import ParticleCanvas from "./ParticleCanvas";
 import { type AppSettings, DEFAULT_SETTINGS } from "../types";
 import Navbar from "./Navbar";
+import lightLogo from "../assets/light.png";
 import darkLogo from "../assets/dark.png";
 
 export default function Experiment() {
@@ -99,7 +100,7 @@ export default function Experiment() {
                     <span className="badge-dot" />
                     <span>Undetectable AI</span>
                   </div>
-                  <img src={darkLogo} className="hero-logo" alt="CorvusX Logo" />
+                  <img src={theme === "black" ? darkLogo : lightLogo} className="hero-logo" alt="CorvusX Logo" />
                   <p className="hero-subtext">
                     CorvusX delivers real-time, completely undetectable answers directly on your screen—helping you think clearly, solve optimally, and perform with absolute confidence during high-stakes interviews.
                   </p>

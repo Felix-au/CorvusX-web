@@ -100,16 +100,9 @@ export default function Experiment() {
                     <span>Undetectable AI</span>
                   </div>
                   <img src={darkLogo} className="hero-logo" alt="CorvusX Logo" />
-                  <div className="hero-actions">
-                    <a
-                      href="https://github.com/Felix-au/CorvusX-Intelligence-in-the-Shadows/releases/latest"
-                      className="btn-primary"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      <span>Download</span>
-                    </a>
-                  </div>
+                  <p className="hero-subtext">
+                    CorvusX delivers real-time, completely undetectable answers directly on your screen—helping you think clearly, solve optimally, and perform with absolute confidence during high-stakes interviews.
+                  </p>
                 </div>
               </div>
             </section>

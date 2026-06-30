@@ -69,7 +69,7 @@ export default function ParticleCanvas({ settings }: ParticleCanvasProps) {
     let hasGyro = false;
 
     // ─── 3D Coordinates Setup ──────────────────────────────────────────────
-    const sortedBrain = [...rawParticles.brain].slice(0, PARTICLE_COUNT);
+    const sortedBrain = [...rawParticles.brain].slice(0, PARTICLE_COUNT).map((p) => ({ x: p.x, y: p.y, z: p.z }));
     // Expand lightbulb by 1.25 and rotate -45 degrees around X-axis
     const angle45 = -Math.PI / 4; // -45 degrees in radians
     const cos45 = Math.cos(angle45);
@@ -557,6 +557,50 @@ export default function ParticleCanvas({ settings }: ParticleCanvasProps) {
       sortedEnvelope[envFillIndices[i]] = envFillCoordinates[i];
     }
 
+    // Mathematically center each shape's 3D coordinates on startup (once on initialization)
+    [
+      sortedBrain,
+      sortedScattered,
+      sortedDNA,
+      sortedPyramid,
+      sortedCube,
+      sortedTorus,
+      sortedTrefoil,
+      sortedAstroid,
+      sortedEnvelope,
+      sortedSphere,
+      sortedLightbulb
+    ].forEach((shape) => {
+      if (!shape || shape.length === 0) return;
+
+      let minY = Infinity;
+      let maxY = -Infinity;
+      let minX = Infinity;
+      let maxX = -Infinity;
+      let minZ = Infinity;
+      let maxZ = -Infinity;
+
+      for (let i = 0; i < shape.length; i++) {
+        const p = shape[i];
+        if (p.y < minY) minY = p.y;
+        if (p.y > maxY) maxY = p.y;
+        if (p.x < minX) minX = p.x;
+        if (p.x > maxX) maxX = p.x;
+        if (p.z < minZ) minZ = p.z;
+        if (p.z > maxZ) maxZ = p.z;
+      }
+
+      const offsetY = (minY + maxY) / 2;
+      const offsetX = (minX + maxX) / 2;
+      const offsetZ = (minZ + maxZ) / 2;
+
+      for (let i = 0; i < shape.length; i++) {
+        shape[i].x -= offsetX;
+        shape[i].y -= offsetY;
+        shape[i].z -= offsetZ;
+      }
+    });
+
     // Sort coordinates by Y (bottom-to-top) so colors blend beautifully
     sortedBrain.sort((a, b) => a.y - b.y);
     sortedLightbulb.sort((a, b) => a.y - b.y);
@@ -675,17 +719,17 @@ export default function ParticleCanvas({ settings }: ParticleCanvasProps) {
       }
 
       const configs = [
-        { cx: isMobile ? W * 0.5 : W * 0.72, cy: isMobile ? H * 0.35 : H * 0.5, scale: isMobile ? 400 : 550 }, // Brain (Right)
-        { cx: isMobile ? W * 0.5 : W * 0.5, cy: isMobile ? H * 0.35 : H * 0.5, scale: isMobile ? 320 : 445 },  // Scattered (Center)
-        { cx: isMobile ? W * 0.5 : W * 0.72, cy: isMobile ? H * 0.35 : H * 0.5, scale: isMobile ? 300 : 420 }, // DNA Helix (Right)
-        { cx: isMobile ? W * 0.5 : W * 0.28, cy: isMobile ? H * 0.35 : H * 0.5, scale: isMobile ? 300 : 420 }, // Octahedron (Left)
-        { cx: isMobile ? W * 0.5 : W * 0.72, cy: isMobile ? H * 0.35 : H * 0.5, scale: isMobile ? 220 : 330 }, // Cube (Right)
-        { cx: isMobile ? W * 0.5 : W * 0.28, cy: isMobile ? H * 0.35 : H * 0.5, scale: isMobile ? 240 : 360 }, // Torus (Left, rotated sideways)
-        { cx: isMobile ? W * 0.5 : W * 0.72, cy: isMobile ? H * 0.35 : H * 0.5, scale: isMobile ? 300 : 420 }, // Trefoil Knot (Right)
-        { cx: isMobile ? W * 0.5 : W * 0.28, cy: isMobile ? H * 0.35 : H * 0.5, scale: isMobile ? 300 : 420 }, // Astroid Star (Left)
-        { cx: isMobile ? W * 0.5 : W * 0.28, cy: isMobile ? H * 0.35 : H * 0.5, scale: isMobile ? 320 : 445 }, // Email Envelope (Left)
-        { cx: isMobile ? W * 0.5 : W * 0.5, cy: isMobile ? H * 0.35 : H * 0.5, scale: isMobile ? 380 : 520 },  // Sphere (Center)
-        { cx: isMobile ? W * 0.5 : W * 0.28, cy: isMobile ? H * 0.35 : H * 0.5, scale: isMobile ? 320 : 445 }, // Lightbulb (Left)
+        { cx: isMobile ? W * 0.5 : W * 0.72, cy: H * 0.5, scale: isMobile ? 400 : 550 }, // Brain (Right)
+        { cx: isMobile ? W * 0.5 : W * 0.5, cy: H * 0.5, scale: isMobile ? 320 : 445 },  // Scattered (Center)
+        { cx: isMobile ? W * 0.5 : W * 0.72, cy: H * 0.5, scale: isMobile ? 300 : 420 }, // DNA Helix (Right)
+        { cx: isMobile ? W * 0.5 : W * 0.28, cy: H * 0.5, scale: isMobile ? 300 : 420 }, // Octahedron (Left)
+        { cx: isMobile ? W * 0.5 : W * 0.72, cy: H * 0.5, scale: isMobile ? 220 : 330 }, // Cube (Right)
+        { cx: isMobile ? W * 0.5 : W * 0.28, cy: H * 0.5, scale: isMobile ? 240 : 360 }, // Torus (Left, rotated sideways)
+        { cx: isMobile ? W * 0.5 : W * 0.72, cy: H * 0.5, scale: isMobile ? 300 : 420 }, // Trefoil Knot (Right)
+        { cx: isMobile ? W * 0.5 : W * 0.28, cy: H * 0.5, scale: isMobile ? 300 : 420 }, // Astroid Star (Left)
+        { cx: isMobile ? W * 0.5 : W * 0.28, cy: H * 0.5, scale: isMobile ? 320 : 445 }, // Email Envelope (Left)
+        { cx: isMobile ? W * 0.5 : W * 0.5, cy: H * 0.5, scale: isMobile ? 380 : 520 },  // Sphere (Center)
+        { cx: isMobile ? W * 0.5 : W * 0.28, cy: H * 0.5, scale: isMobile ? 320 : 445 }, // Lightbulb (Left)
       ];
 
       // ─── Math for Multisection Morphing ──────────────────────────────────

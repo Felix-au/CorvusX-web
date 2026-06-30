@@ -1,17 +1,48 @@
-.navbar {
+.navbarWrapper {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   z-index: 1000;
+  pointer-events: none;
+}
+.navbar {
+  pointer-events: auto;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
   padding: 16px 0;
-  transition: background 0.3s var(--ease), backdrop-filter 0.3s var(--ease), box-shadow 0.3s var(--ease);
+  transition: top 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+              left 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+              right 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+              width 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+              max-width 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+              padding 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+              border-radius 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+              border 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+              background 0.3s ease,
+              backdrop-filter 0.3s ease,
+              box-shadow 0.3s ease;
 }
 .scrolled {
+  top: 16px;
+  left: 50%;
+  right: auto;
+  transform: translateX(-50%);
+  width: 90%;
+  max-width: 800px;
+  border-radius: 99px;
+  border: 1px solid var(--border);
   background: var(--nav-scrolled);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  box-shadow: 0 1px 0 var(--border);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.15);
+  padding: 8px 0;
+}
+.scrolled .inner {
+  padding: 0 24px;
 }
 .inner {
   max-width: 1200px;

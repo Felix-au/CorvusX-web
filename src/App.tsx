@@ -8,21 +8,41 @@ import Faq from './components/Faq'
 import Download from './components/Download'
 import Footer from './components/Footer'
 
+import Experiment from './components/Experiment'
+import VersionSwitcher from './components/VersionSwitcher'
+
 function App() {
+  const path = window.location.pathname
+
+  const renderContent = () => {
+    switch (path) {
+      case '/experiment':
+        return <Experiment />
+      default:
+        return (
+          <>
+            <Navbar />
+            <main>
+              <Hero />
+              <Features />
+              <HowItWorks />
+              <Shortcuts />
+              <Faq />
+              <Download />
+            </main>
+            <Footer />
+          </>
+        )
+    }
+  }
+
   return (
     <>
-      <Navbar />
-      <main>
-        <Hero />
-        <Features />
-        <HowItWorks />
-        <Shortcuts />
-        <Faq />
-        <Download />
-      </main>
-      <Footer />
+      {renderContent()}
+      <VersionSwitcher />
     </>
   )
 }
 
 export default App
+

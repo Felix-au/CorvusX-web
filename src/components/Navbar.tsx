@@ -2,8 +2,6 @@ import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Sun, Moon } from 'lucide-react'
 import styles from './Navbar.module.css'
-import lightLogo from '../assets/light.png'
-import darkLogo from '../assets/dark.png'
 
 const links = [
   { label: 'Demo',         href: '#demo' },
@@ -53,11 +51,7 @@ export default function Navbar({ isDark: propIsDark, onThemeToggle }: NavbarProp
     >
       <nav className={`${styles.navbar} ${scrolled ? styles.scrolled : ''}`}>
         <div className={styles.inner}>
-          {/* Logo */}
-          <a href="#" className={styles.logo}>
-            <img src={isDark ? darkLogo : lightLogo} className={styles.logoImage} alt="CorvusX Logo" />
-            <span>CorvusX</span>
-          </a>
+
 
           {/* Desktop links */}
           <ul className={styles.links}>

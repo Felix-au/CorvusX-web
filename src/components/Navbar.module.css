@@ -9,22 +9,21 @@
 .navbar {
   pointer-events: auto;
   position: absolute;
-  top: 16px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 90%;
-  max-width: 1200px;
+  top: 0;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  width: 100%;
+  max-width: 100%;
   padding: 14px 0;
-  border-radius: 20px;
+  border-radius: 0;
   background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
+  border: none;
+  border-bottom: 1px solid var(--glass-border);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  box-shadow: var(--nav-glow);
+  box-shadow: none;
   transition: top 0.4s cubic-bezier(0.16, 1, 0.3, 1),
-              left 0.4s cubic-bezier(0.16, 1, 0.3, 1),
-              right 0.4s cubic-bezier(0.16, 1, 0.3, 1),
-              transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
               width 0.4s cubic-bezier(0.16, 1, 0.3, 1),
               max-width 0.4s cubic-bezier(0.16, 1, 0.3, 1),
               padding 0.4s cubic-bezier(0.16, 1, 0.3, 1),
@@ -36,9 +35,6 @@
 }
 .scrolled {
   top: 16px;
-  left: 50%;
-  right: auto;
-  transform: translateX(-50%);
   width: 90%;
   max-width: 800px;
   border-radius: 99px;

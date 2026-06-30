@@ -100,7 +100,7 @@ export default function Experiment() {
                     <span className="badge-dot" />
                     <span>Undetectable AI</span>
                   </div>
-                  <img src={theme === "black" ? darkLogo : lightLogo} className="hero-logo" alt="CorvusX Logo" width="290" height="240" />
+                  <img src={theme === "black" ? darkLogo : lightLogo} className="hero-logo" alt="CorvusX Logo" width="380" height="320" />
                   <p className="hero-subtext">
                     CorvusX delivers real-time, completely undetectable answers directly on your screen—helping you think clearly, solve optimally, and perform with absolute confidence during high-stakes interviews.
                   </p>

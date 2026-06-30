@@ -649,19 +649,24 @@ export default function ParticleCanvas({ settings }: ParticleCanvasProps) {
       angle: number;
     }
     const cards: CardData[] = [
+      // Row 0 (Top row of stack - all red)
       { text: "Syntax", isLoad: true, redIndex: 0, angle: 0 },
-      { text: "Creativity", isLoad: false, redIndex: -1, angle: Math.PI * 0.15 },
-      { text: "Formula", isLoad: true, redIndex: 1, angle: Math.PI * 0.4 },
-      { text: "Reasoning", isLoad: false, redIndex: -1, angle: Math.PI * 0.55 },
-      { text: "API Docs", isLoad: true, redIndex: 2, angle: Math.PI * 0.8 },
-      { text: "Strategy", isLoad: false, redIndex: -1, angle: Math.PI * 0.95 },
-      { text: "Dates", isLoad: true, redIndex: 3, angle: Math.PI * 1.2 },
-      { text: "Concepts", isLoad: false, redIndex: -1, angle: Math.PI * 1.35 },
-      { text: "Commands", isLoad: true, redIndex: 4, angle: Math.PI * 1.6 },
-      { text: "Problem Solving", isLoad: false, redIndex: -1, angle: Math.PI * 1.75 },
-      { text: "References", isLoad: true, redIndex: 5, angle: Math.PI * 0.25 },
-      { text: "Error Codes", isLoad: true, redIndex: 6, angle: Math.PI * 0.65 },
-      { text: "Shortcuts", isLoad: true, redIndex: 7, angle: Math.PI * 1.1 }
+      { text: "Formula", isLoad: true, redIndex: 1, angle: Math.PI * 0.25 },
+      { text: "API Docs", isLoad: true, redIndex: 2, angle: Math.PI * 0.5 },
+      { text: "Dates", isLoad: true, redIndex: 3, angle: Math.PI * 0.75 },
+      { text: "Commands", isLoad: true, redIndex: 4, angle: Math.PI * 1.0 },
+
+      // Row 1 (Middle row of stack - all red)
+      { text: "References", isLoad: true, redIndex: 5, angle: Math.PI * 1.25 },
+      { text: "Error Codes", isLoad: true, redIndex: 6, angle: Math.PI * 1.5 },
+      { text: "Shortcuts", isLoad: true, redIndex: 7, angle: Math.PI * 1.75 },
+
+      // Row 2 (Bottom row of stack - all green)
+      { text: "Creativity", isLoad: false, redIndex: -1, angle: 0 },
+      { text: "Reasoning", isLoad: false, redIndex: -1, angle: 0 },
+      { text: "Strategy", isLoad: false, redIndex: -1, angle: 0 },
+      { text: "Concepts", isLoad: false, redIndex: -1, angle: 0 },
+      { text: "Problem Solving", isLoad: false, redIndex: -1, angle: 0 }
     ];
 
     const neuralWaves: { progress: number; speed: number; intensity: number }[] = [];
@@ -1126,7 +1131,7 @@ export default function ParticleCanvas({ settings }: ParticleCanvasProps) {
       // ─── Render Cognitive Function HUD (Only in Section 0) ────────────────
       if (index === 0) {
         const hudX = isMobile ? W * 0.5 : W * 0.72;
-        const hudY = H - (isMobile ? 48 : 64); // positioned right above the footer
+        const hudY = isMobile ? H * 0.78 : H * 0.84;
 
         const isOverloaded = timelineTime < ALL_DRIFTED_TIME;
         const blinkOpacity = 0.35 + Math.abs(Math.sin(now * 0.003)) * 0.65;
@@ -1180,66 +1185,72 @@ export default function ParticleCanvas({ settings }: ParticleCanvasProps) {
         ctx!.fillText(statusText, hx + 22 + labelWidth, hudY);
       }
 
-      // ─── Render Orbiting/Stacked Cards (Only in Section 0) ───────────────
+      // ─── Render Flanking/Stacked Cards (Only in Section 0) ────────────────
       if (index === 0) {
         // Get Logo screen coordinates
         const logoEl = document.querySelector('.hero-experiment-wrapper .hero-logo');
-        let logoX = isMobile ? W * 0.5 : W * 0.25;
-        let logoY = isMobile ? H * 0.22 : H * 0.5;
+        let logoX = isMobile ? W * 0.5 : W * 0.25; // fallback center of left 50%
+        let logoY = isMobile ? H * 0.22 : H * 0.5; // fallback center vertically
         if (logoEl) {
           const rect = logoEl.getBoundingClientRect();
           logoX = rect.left + rect.width / 2;
           logoY = rect.top + rect.height / 2;
         }
 
-        // Calculate logo attraction glow strength (sum of active drift amplitudes)
+        // Calculate logo attraction glow strength based on drifting bad cards
         let logoGlowStrength = 0;
-        cards.forEach((card) => {
-          if (card.isLoad && card.redIndex >= 0) {
-            const startTime = START_DRIFT_TIME + card.redIndex * CARD_DRIFT_INTERVAL;
-            const endTime = startTime + DRIFT_DURATION;
-            if (timelineTime > startTime && timelineTime < endTime) {
-              logoGlowStrength += Math.sin(((timelineTime - startTime) / DRIFT_DURATION) * Math.PI);
+        cards.forEach((c) => {
+          if (c.isLoad && c.redIndex >= 0) {
+            const st = START_DRIFT_TIME + c.redIndex * CARD_DRIFT_INTERVAL;
+            const et = st + DRIFT_DURATION;
+            if (timelineTime > st && timelineTime < et) {
+              const progress = (timelineTime - st) / DRIFT_DURATION;
+              logoGlowStrength += Math.sin(progress * Math.PI) * 0.78; // peak contribution
             }
           }
         });
         logoGlowStrength = Math.min(1.0, logoGlowStrength);
 
-        // Apply alpha-based silhouette glow directly to logo image
-        const logoImg = logoEl as HTMLImageElement;
-        if (logoImg) {
+        // Apply silhouette glow directly to logo DOM element
+        if (logoEl) {
           if (logoGlowStrength > 0.01) {
-            logoImg.style.filter = `drop-shadow(0 0 ${logoGlowStrength * 16}px rgba(34, 211, 238, ${logoGlowStrength * 0.65}))`;
+            const pxBlur = logoGlowStrength * (isMobile ? 12 : 22);
+            (logoEl as HTMLImageElement).style.filter = `drop-shadow(0 0 ${pxBlur}px rgba(34, 211, 238, ${logoGlowStrength * 0.85}))`;
           } else {
-            logoImg.style.filter = '';
+            (logoEl as HTMLImageElement).style.filter = '';
           }
         }
 
         const hudX = isMobile ? W * 0.5 : W * 0.72;
-        const hudY = H - (isMobile ? 48 : 64);
-        const stackYBase = hudY - (isMobile ? 24 : 32);
+        const hudY = isMobile ? H * 0.78 : H * 0.84;
+        const stackYBase = hudY - (isMobile ? 24 : 30);
 
-        // Precalculate stacked card coordinates in horizontally centered rows (5, 5, 3)
+        // Precalculate stacked card coordinates in horizontally centered rows (5, 3, 5)
+        // Row 0 (top): indices 0 to 4 (5 red cards)
+        // Row 1 (middle): indices 5 to 7 (3 red cards)
+        // Row 2 (bottom): indices 8 to 12 (5 green cards)
         const hGap = isMobile ? 8 : 12;
         const vGap = isMobile ? 8 : 12;
         const baseFontSize = isMobile ? 9.5 : 12;
         const baseRectHeight = baseFontSize + baseFontSize * 0.9;
 
         const stackCoords: { x: number; y: number }[] = [];
-        const rowIndices = [[0, 1, 2, 3, 4], [5, 6, 7, 8, 9], [10, 11, 12]];
+        const rowIndices = [[0, 1, 2, 3, 4], [5, 6, 7], [8, 9, 10, 11, 12]];
 
         ctx!.font = `600 ${Math.round(baseFontSize)}px 'Outfit', 'Inter', system-ui, sans-serif`;
 
         rowIndices.forEach((row, r) => {
+          // Row 2 is bottom, Row 1 is middle, Row 0 is top
           const offsetMultiplier = 2 - r;
           const rowY = stackYBase - offsetMultiplier * (baseRectHeight + vGap);
 
           let rowWidth = 0;
           const cardWidths = row.map((idx) => {
             const txtWidth = ctx!.measureText(cards[idx].text).width;
-            return txtWidth + baseFontSize * 1.3;
+            const w = txtWidth + baseFontSize * 1.3;
+            rowWidth += w;
+            return w;
           });
-          cardWidths.forEach(w => rowWidth += w);
           rowWidth += (row.length - 1) * hGap;
 
           let currentX = hudX - rowWidth / 2;
@@ -1251,27 +1262,6 @@ export default function ParticleCanvas({ settings }: ParticleCanvasProps) {
             };
             currentX += w + hGap;
           });
-        });
-
-        // Precalculate final collapsed coordinates for green cards (indices 1, 3, 5, 7, 9) in a single centered row
-        const greenRowIndices = [1, 3, 5, 7, 9];
-        let greenRowWidth = 0;
-        const greenCardWidths = greenRowIndices.map((idx) => {
-          const txtWidth = ctx!.measureText(cards[idx].text).width;
-          return txtWidth + baseFontSize * 1.3;
-        });
-        greenCardWidths.forEach(w => greenRowWidth += w);
-        greenRowWidth += (greenRowIndices.length - 1) * hGap;
-
-        let greenCurrentX = hudX - greenRowWidth / 2;
-        const finalStackCoords: { [idx: number]: { x: number; y: number } } = {};
-        greenRowIndices.forEach((idx, colIndex) => {
-          const w = greenCardWidths[colIndex];
-          finalStackCoords[idx] = {
-            x: greenCurrentX + w / 2,
-            y: stackYBase - 4 // settle slightly lower, directly above HUD
-          };
-          greenCurrentX += w + hGap;
         });
 
         cards.forEach((card, i) => {
@@ -1292,26 +1282,25 @@ export default function ParticleCanvas({ settings }: ParticleCanvasProps) {
           const easeT = t_card * t_card * (3 - 2 * t_card);
 
           // Get coordinates
-          let stackX = stackCoords[i].x;
-          let stackY = stackCoords[i].y;
+          const stackX = stackCoords[i].x;
+          const stackY = stackCoords[i].y;
 
-          // If it is a green card, collapse its stack coordinate over time to a single centered row
-          if (!card.isLoad && finalStackCoords[i]) {
-            const stackProgress = Math.min(1.0, timelineTime / ALL_DRIFTED_TIME);
-            const easeStack = stackProgress * stackProgress * (3 - 2 * stackProgress);
-            stackX = lerp(stackCoords[i].x, finalStackCoords[i].x, easeStack);
-            stackY = lerp(stackCoords[i].y, finalStackCoords[i].y, easeStack);
+          // Flanking stack target position flanking the logo (left or right)
+          let targetFlankX = stackX;
+          let targetFlankY = stackY;
+          if (card.isLoad && card.redIndex >= 0) {
+            const isLeft = card.redIndex % 2 === 0;
+            const flankXOffset = isMobile ? 65 : 105;
+            targetFlankX = isLeft ? logoX - flankXOffset : logoX + flankXOffset;
+
+            const rowK = Math.floor(card.redIndex / 2); // row index 0, 1, 2, 3 in the flanking stack
+            const ySpacing = isMobile ? 18 : 28;
+            targetFlankY = logoY - (isMobile ? 27 : 42) + rowK * ySpacing;
           }
 
-          // Position orbiting the logo
-          const theta = card.angle + timelineTime * 0.001;
-          const orbitRadius = isMobile ? 32 : 52;
-          const orbitX = logoX + Math.cos(theta) * orbitRadius;
-          const orbitY = logoY + Math.sin(theta) * orbitRadius * 0.65; // slightly squashed vertically
-
           // Interpolated screen coordinates
-          const screenX = lerp(stackX, orbitX, easeT);
-          const screenY = lerp(stackY, orbitY, easeT);
+          const screenX = lerp(stackX, targetFlankX, easeT);
+          const screenY = lerp(stackY, targetFlankY, easeT);
 
           const fontSize = lerp(isMobile ? 9.5 : 12, isMobile ? 6 : 8, easeT);
 
@@ -1330,29 +1319,33 @@ export default function ParticleCanvas({ settings }: ParticleCanvasProps) {
             // Fade out when scrolling past first section
             ctx!.globalAlpha = (1.0 - t) * settingsRef.current.particleOpacity;
 
-            // Drifting cards glow cyan, stack and orbit cards use default colors
-            const isDrifting = t_card > 0.0 && t_card < 1.0;
-
-            // Border glow for drifting cards
-            if (isDrifting) {
-              ctx!.shadowColor = "#22d3ee";
-              ctx!.shadowBlur = 8 * Math.sin(Math.PI * t_card);
-            }
-
-            // Background rounded rect
+            // Background rounded rect style
             ctx!.fillStyle = theme === "black" ? "rgba(10, 10, 12, 0.78)" : "rgba(255, 255, 255, 0.88)";
-            ctx!.strokeStyle = isDrifting 
-              ? `rgba(34, 211, 238, ${0.35 + Math.sin(Math.PI * t_card) * 0.35})` 
-              : (card.isLoad ? "rgba(239, 68, 68, 0.35)" : "rgba(34, 197, 94, 0.35)");
+            
+            // Border stroke: cyan glow if active pulling, else normal color bounds
+            const isTransitioning = t_card > 0.0 && t_card < 1.0;
+            if (isTransitioning) {
+              ctx!.strokeStyle = "rgba(34, 211, 238, 0.65)";
+              ctx!.shadowColor = "#22d3ee";
+              ctx!.shadowBlur = 8 * (1.0 - easeT);
+            } else {
+              ctx!.strokeStyle = card.isLoad ? "rgba(239, 68, 68, 0.35)" : "rgba(34, 197, 94, 0.35)";
+            }
             
             ctx!.lineWidth = 1.0;
             ctx!.beginPath();
             ctx!.roundRect(rx, ry, rectWidth, rectHeight, fontSize * 0.5);
             ctx!.fill();
             ctx!.stroke();
+            ctx!.shadowBlur = 0; // reset glow
 
-            // Text
-            ctx!.fillStyle = isDrifting ? "#22d3ee" : (card.isLoad ? "#f87171" : "#4ade80");
+            // Text color: cyan if transitioning, else red/green
+            if (isTransitioning) {
+              ctx!.fillStyle = "#22d3ee";
+            } else {
+              ctx!.fillStyle = card.isLoad ? "#f87171" : "#4ade80";
+            }
+
             ctx!.textBaseline = "middle";
             ctx!.textAlign = "center";
             ctx!.fillText(card.text, screenX, screenY + 0.5);

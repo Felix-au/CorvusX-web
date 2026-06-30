@@ -3,14 +3,6 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Sun, Moon } from 'lucide-react'
 import styles from './Navbar.module.css'
 
-const links = [
-  { label: 'Demo',         href: '#demo' },
-  { label: 'Features',     href: '#features' },
-  { label: 'How it Works', href: '#how-it-works' },
-  { label: 'Shortcuts',    href: '#shortcuts' },
-  { label: 'FAQ',          href: '#faq' },
-]
-
 interface NavbarProps {
   isDark?: boolean
   onThemeToggle?: (dark: boolean) => void
@@ -20,6 +12,16 @@ export default function Navbar({ isDark: propIsDark, onThemeToggle }: NavbarProp
   const [scrolled,  setScrolled]  = useState(false)
   const [menuOpen,  setMenuOpen]  = useState(false)
   const [localIsDark, setLocalIsDark] = useState(true)
+
+  const path = window.location.pathname
+  const prefix = path === '/experiment' ? '' : '/experiment'
+  const navLinks = [
+    { label: 'Demo',         href: `${prefix}#demo` },
+    { label: 'Features',     href: `${prefix}#features` },
+    { label: 'How it Works', href: `${prefix}#how-it-works` },
+    { label: 'Shortcuts',    href: `${prefix}#shortcuts` },
+    { label: 'FAQ',          href: `${prefix}#faq` },
+  ]
 
   const isDark = propIsDark !== undefined ? propIsDark : localIsDark
 
@@ -52,11 +54,11 @@ export default function Navbar({ isDark: propIsDark, onThemeToggle }: NavbarProp
       <nav className={`${styles.navbar} ${scrolled ? styles.scrolled : ''}`}>
         <div className={styles.inner}>
           {/* Branding Heading */}
-          <a href="#" className={styles.logo}>
+          <a href={path === '/experiment' ? '/' : '#'} className={styles.logo}>
             <span>CorvusX</span>
           </a>
           <ul className={styles.links}>
-            {links.map(l => (
+            {navLinks.map(l => (
               <li key={l.href}>
                 <a href={l.href} className={styles.link}>{l.label}</a>
               </li>
@@ -107,7 +109,7 @@ export default function Navbar({ isDark: propIsDark, onThemeToggle }: NavbarProp
               exit={{ height: 0, opacity: 0 }}
               transition={{ duration: 0.25 }}
             >
-              {links.map(l => (
+              {navLinks.map(l => (
                 <a key={l.href} href={l.href} className={styles.mobileLink}
                   onClick={() => setMenuOpen(false)}>
                   {l.label}

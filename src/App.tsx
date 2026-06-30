@@ -15,8 +15,6 @@ function App() {
   const renderContent = () => {
     switch (path) {
       case '/experiment':
-        return <Experiment />
-      default:
         return (
           <>
             <Navbar />
@@ -31,6 +29,8 @@ function App() {
             <Footer />
           </>
         )
+      default:
+        return <Experiment />
     }
   }
 

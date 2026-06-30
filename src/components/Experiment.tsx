@@ -113,7 +113,6 @@ export default function Experiment() {
                       <span>Download Latest Release</span>
                     </a>
                   </div>
-                  <p className="hero-meta">Requires Windows 10/11 or macOS 12+</p>
                 </div>
               </div>
             </section>

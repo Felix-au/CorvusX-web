@@ -654,7 +654,8 @@ html.scroll-snap .experiment-route .section {
 .experiment-route .hero-content {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
+  text-align: center;
   gap: 20px;
   padding: 0 10%;
   width: 100%;
@@ -695,7 +696,7 @@ html.scroll-snap .experiment-route .section {
 }
 
 .experiment-route .hero-subtext {
-  font-size: 0.92rem;
+  font-size: 0.8rem;
   line-height: 1.6;
   color: var(--text-muted);
   max-width: 480px;
@@ -706,22 +707,25 @@ html.scroll-snap .experiment-route .section {
 .experiment-route .hero-actions {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 14px;
+  width: 100%;
 }
 
 .experiment-route .btn-primary {
   position: relative;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 9px;
-  padding: 12px 28px;
-  background: linear-gradient(135deg, #22d3ee, #a78bfa);
+  padding: 14px 30px;
+  background: linear-gradient(135deg, var(--cyan), var(--violet));
   border-radius: 12px;
-  font-size: 0.95rem;
+  font-size: 0.93rem;
   font-weight: 700;
   color: #fff;
   overflow: hidden;
-  transition: transform 0.25s, box-shadow 0.25s;
+  transition: transform 0.25s, box-shadow 0.25s, opacity 0.2s;
   box-shadow: 0 0 32px rgba(34, 211, 238, 0.18);
   text-decoration: none;
   cursor: pointer;
@@ -730,6 +734,7 @@ html.scroll-snap .experiment-route .section {
 .experiment-route .btn-primary:hover {
   transform: translateY(-3px);
   box-shadow: 0 10px 40px rgba(34, 211, 238, 0.28);
+  opacity: 0.95;
 }
 
 .experiment-route .hero-meta {

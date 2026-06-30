@@ -643,6 +643,13 @@ html.scroll-snap .experiment-route .section {
   margin-bottom: auto;
 }
 
+.experiment-route .hero-logo {
+  height: 68px;
+  width: auto;
+  margin-bottom: -4px;
+  display: block;
+}
+
 .experiment-route .badge-wrapper {
   display: inline-flex;
   align-items: center;

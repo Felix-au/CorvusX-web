@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Sun, Moon } from 'lucide-react'
 import styles from './Navbar.module.css'
+import lightLogo from '../assets/light.png'
+import darkLogo from '../assets/dark.png'
 
 const links = [
   { label: 'Demo',         href: '#demo' },
@@ -53,19 +55,7 @@ export default function Navbar({ isDark: propIsDark, onThemeToggle }: NavbarProp
         <div className={styles.inner}>
           {/* Logo */}
           <a href="#" className={styles.logo}>
-            <div className={styles.logoIcon}>
-              <svg viewBox="0 0 32 32" fill="none">
-                <path d="M16 4C9.373 4 4 9.373 4 16s5.373 12 12 12 12-5.373 12-12S22.627 4 16 4z"
-                  fill="url(#nlg)" opacity="0.12"/>
-                <path d="M16 8l-2 5h-5l4 3-1.5 5L16 18l4.5 3-1.5-5 4-3h-5L16 8z"
-                  fill="url(#nlg)"/>
-                <defs>
-                  <linearGradient id="nlg" x1="4" y1="4" x2="28" y2="28" gradientUnits="userSpaceOnUse">
-                    <stop stopColor="#22d3ee"/><stop offset="1" stopColor="#a78bfa"/>
-                  </linearGradient>
-                </defs>
-              </svg>
-            </div>
+            <img src={isDark ? darkLogo : lightLogo} className={styles.logoImage} alt="CorvusX Logo" />
             <span>CorvusX</span>
           </a>
 

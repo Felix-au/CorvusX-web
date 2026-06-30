@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import ParticleCanvas from "./ParticleCanvas";
 import { type AppSettings, DEFAULT_SETTINGS } from "../types";
 import Navbar from "./Navbar";
+import lightLogo from "../assets/light.png";
+import darkLogo from "../assets/dark.png";
 
 export default function Experiment() {
   const [theme, setTheme] = useState<"black" | "white">("black");
@@ -93,6 +95,7 @@ export default function Experiment() {
             <section key={index} className="section first-slide-container">
               <Navbar isDark={theme === "black"} onThemeToggle={(dark) => setTheme(dark ? "black" : "white")} />
               <div className="hero-experiment-wrapper">
+                <img src={theme === "black" ? darkLogo : lightLogo} className="hero-logo" alt="CorvusX Logo" />
                 <div className="badge-wrapper">
                   <span className="badge-dot" />
                   Stealth AI · Always On Top · Invisible to Screen Recorders

@@ -64,8 +64,11 @@
   transition: opacity 0.2s;
 }
 .logo:hover { opacity: 0.85; }
-.logoIcon { width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; }
-.logoIcon svg { width: 28px; height: 28px; }
+.logoImage {
+  height: 28px;
+  width: auto;
+  display: block;
+}
 .links {
   display: flex;
   list-style: none;

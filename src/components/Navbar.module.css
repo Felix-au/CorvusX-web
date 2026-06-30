@@ -107,20 +107,61 @@
 .themeToggle span { display: flex; align-items: center; justify-content: center; }
 
 .cta {
-  padding: 8px 18px;
-  background: linear-gradient(135deg, var(--cyan), var(--violet));
-  border-radius: 8px;
-  font-size: 0.825rem;
-  font-weight: 700;
-  color: #fff;
+  padding: 7px 18px;
+  background: linear-gradient(135deg, 
+    #0f0f0f 0%, 
+    #262626 25%, 
+    #404040 45%, 
+    #0a0a0a 50%, 
+    #262626 55%, 
+    #171717 80%, 
+    #050505 100%
+  );
+  background-size: 200% 200%;
+  background-position: 0% 0%;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 99px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #ffffff; /* White text on obsidian chrome */
   white-space: nowrap;
-  transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
-  box-shadow: 0 0 16px rgba(0, 217, 200, 0.15);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35), 
+              inset 0 1px 1px rgba(255, 255, 255, 0.15), 
+              inset 0 -1px 2px rgba(0, 0, 0, 0.4);
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.4);
 }
 .cta:hover {
-  opacity: 0.95;
+  background-position: 100% 100%;
   transform: translateY(-1.5px);
-  box-shadow: 0 4px 20px rgba(0, 217, 200, 0.35);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45), 
+              inset 0 1px 1px rgba(255, 255, 255, 0.25), 
+              inset 0 -1px 2px rgba(0, 0, 0, 0.3);
+}
+:global([data-theme="light"]) .cta {
+  background: linear-gradient(135deg, 
+    #ffffff 0%, 
+    #f3f4f6 25%, 
+    #d1d5db 45%, 
+    #9ca3af 50%, 
+    #e5e7eb 55%, 
+    #ffffff 80%, 
+    #d1d5db 100%
+  );
+  background-size: 200% 200%;
+  background-position: 0% 0%;
+  border-color: rgba(0, 0, 0, 0.2);
+  color: #0f172a; /* High contrast dark text on silver chrome */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1), 
+              inset 0 1px 1px rgba(255, 255, 255, 0.8), 
+              inset 0 -1px 2px rgba(0, 0, 0, 0.15);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+:global([data-theme="light"]) .cta:hover {
+  background-position: 100% 100%;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15), 
+              inset 0 1px 1px rgba(255, 255, 255, 0.9), 
+              inset 0 -1px 2px rgba(0, 0, 0, 0.1);
 }
 .hamburger {
   display: none;
@@ -169,19 +210,59 @@
 .mobileCta {
   margin: 16px 0;
   padding: 12px 20px;
-  background: linear-gradient(135deg, var(--cyan), var(--violet));
-  border-radius: 10px;
-  font-size: 0.95rem;
-  font-weight: 700;
-  color: #fff;
+  background: linear-gradient(135deg, 
+    #0f0f0f 0%, 
+    #262626 25%, 
+    #404040 45%, 
+    #0a0a0a 50%, 
+    #262626 55%, 
+    #171717 80%, 
+    #050505 100%
+  );
+  background-size: 200% 200%;
+  background-position: 0% 0%;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 99px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #ffffff;
   text-align: center;
-  box-shadow: 0 0 16px rgba(0, 217, 200, 0.15);
-  transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35), 
+              inset 0 1px 1px rgba(255, 255, 255, 0.15), 
+              inset 0 -1px 2px rgba(0, 0, 0, 0.4);
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.4);
 }
 .mobileCta:hover {
-  opacity: 0.95;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 20px rgba(0, 217, 200, 0.3);
+  background-position: 100% 100%;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45), 
+              inset 0 1px 1px rgba(255, 255, 255, 0.25), 
+              inset 0 -1px 2px rgba(0, 0, 0, 0.3);
+}
+:global([data-theme="light"]) .mobileCta {
+  background: linear-gradient(135deg, 
+    #ffffff 0%, 
+    #f3f4f6 25%, 
+    #d1d5db 45%, 
+    #9ca3af 50%, 
+    #e5e7eb 55%, 
+    #ffffff 80%, 
+    #d1d5db 100%
+  );
+  background-size: 200% 200%;
+  background-position: 0% 0%;
+  border-color: rgba(0, 0, 0, 0.2);
+  color: #0f172a;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1), 
+              inset 0 1px 1px rgba(255, 255, 255, 0.8), 
+              inset 0 -1px 2px rgba(0, 0, 0, 0.15);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+:global([data-theme="light"]) .mobileCta:hover {
+  background-position: 100% 100%;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15), 
+              inset 0 1px 1px rgba(255, 255, 255, 0.9), 
+              inset 0 -1px 2px rgba(0, 0, 0, 0.1);
 }
 
 @media (max-width: 768px) {

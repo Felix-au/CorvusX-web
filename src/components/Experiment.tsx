@@ -59,7 +59,7 @@ export default function Experiment() {
 
   const shapesMetadata = [
     "Synaptic Brain",
-    "Innovating Lightbulb",
+    "Cosmic Scattered",
     "DNA Double Helix",
     "Structured Octahedron",
     "Geometric Cube",
@@ -68,7 +68,7 @@ export default function Experiment() {
     "Astroid Star",
     "Email Envelope",
     "Holistic Sphere",
-    "Cosmic Scattered",
+    "Innovating Lightbulb",
   ];
 
   return (

@@ -592,6 +592,7 @@ export default function ParticleCanvas({ settings }: ParticleCanvasProps) {
     let activeColors = ["", "", "", ""];
 
     let lastFrameTime = Date.now();
+    let currentScrollRatio = 0;
     const localTimes = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
     let animId: number;
 
@@ -604,7 +605,8 @@ export default function ParticleCanvas({ settings }: ParticleCanvasProps) {
       const scrollTop = window.scrollY || document.documentElement.scrollTop;
       const scrollHeight =
         document.documentElement.scrollHeight - window.innerHeight;
-      const scrollRatio = scrollHeight > 0 ? scrollTop / scrollHeight : 0;
+      const targetScrollRatio = scrollHeight > 0 ? scrollTop / scrollHeight : 0;
+      currentScrollRatio += (targetScrollRatio - currentScrollRatio) * 0.05;
 
       const isMobile = W < 768;
 
@@ -674,7 +676,7 @@ export default function ParticleCanvas({ settings }: ParticleCanvasProps) {
 
       const configs = [
         { cx: isMobile ? W * 0.5 : W * 0.72, cy: isMobile ? H * 0.35 : H * 0.5, scale: isMobile ? 400 : 550 }, // Brain (Right)
-        { cx: isMobile ? W * 0.5 : W * 0.28, cy: isMobile ? H * 0.35 : H * 0.5, scale: isMobile ? 320 : 445 }, // Lightbulb (Left)
+        { cx: isMobile ? W * 0.5 : W * 0.5, cy: isMobile ? H * 0.35 : H * 0.5, scale: isMobile ? 320 : 445 },  // Scattered (Center)
         { cx: isMobile ? W * 0.5 : W * 0.72, cy: isMobile ? H * 0.35 : H * 0.5, scale: isMobile ? 300 : 420 }, // DNA Helix (Right)
         { cx: isMobile ? W * 0.5 : W * 0.28, cy: isMobile ? H * 0.35 : H * 0.5, scale: isMobile ? 300 : 420 }, // Octahedron (Left)
         { cx: isMobile ? W * 0.5 : W * 0.72, cy: isMobile ? H * 0.35 : H * 0.5, scale: isMobile ? 220 : 330 }, // Cube (Right)
@@ -682,14 +684,14 @@ export default function ParticleCanvas({ settings }: ParticleCanvasProps) {
         { cx: isMobile ? W * 0.5 : W * 0.72, cy: isMobile ? H * 0.35 : H * 0.5, scale: isMobile ? 300 : 420 }, // Trefoil Knot (Right)
         { cx: isMobile ? W * 0.5 : W * 0.28, cy: isMobile ? H * 0.35 : H * 0.5, scale: isMobile ? 300 : 420 }, // Astroid Star (Left)
         { cx: isMobile ? W * 0.5 : W * 0.28, cy: isMobile ? H * 0.35 : H * 0.5, scale: isMobile ? 320 : 445 }, // Email Envelope (Left)
-        { cx: isMobile ? W * 0.5 : W * 0.5, cy: isMobile ? H * 0.35 : H * 0.5, scale: isMobile ? 380 : 520 }, // Sphere (Center)
-        { cx: isMobile ? W * 0.5 : W * 0.5, cy: isMobile ? H * 0.35 : H * 0.5, scale: isMobile ? 320 : 445 }, // Scattered (Center)
+        { cx: isMobile ? W * 0.5 : W * 0.5, cy: isMobile ? H * 0.35 : H * 0.5, scale: isMobile ? 380 : 520 },  // Sphere (Center)
+        { cx: isMobile ? W * 0.5 : W * 0.28, cy: isMobile ? H * 0.35 : H * 0.5, scale: isMobile ? 320 : 445 }, // Lightbulb (Left)
       ];
 
       // ─── Math for Multisection Morphing ──────────────────────────────────
       const shapesList = [
         sortedBrain,
-        sortedLightbulb,
+        sortedScattered,
         sortedDNA,
         sortedPyramid,
         sortedCube,
@@ -698,12 +700,12 @@ export default function ParticleCanvas({ settings }: ParticleCanvasProps) {
         sortedAstroid,
         sortedEnvelope,
         sortedSphere,
-        sortedScattered
+        sortedLightbulb
       ];
       const K = shapesList.length; // 11
       const N = K - 1; // 10
 
-      const scaledRatio = scrollRatio * N;
+      const scaledRatio = currentScrollRatio * N;
       let index = Math.floor(scaledRatio);
       let t = scaledRatio - index;
 
@@ -770,16 +772,16 @@ export default function ParticleCanvas({ settings }: ParticleCanvasProps) {
       // Index 6 (Trefoil Knot): +100 degrees (+1.7453 rad) Y-rotation offset
       const shapeOffsets = [
         { rx: 0, ry: 0, rz: 0 },         // 0: Brain
-        { rx: 0, ry: -0.5236, rz: 0 },   // 1: Lightbulb
+        { rx: 0, ry: 0, rz: 0 },         // 1: Scattered
         { rx: 0, ry: 0, rz: 0 },         // 2: DNA
         { rx: 0, ry: 0, rz: 0 },         // 3: Octahedron
         { rx: 0.2618, ry: 0.5236, rz: 0 },// 4: Cube
         { rx: 0, ry: 0.4363, rz: 0 },    // 5: Torus
         { rx: 0, ry: 1.7453, rz: 0 },    // 6: Trefoil Knot
         { rx: 0, ry: 0, rz: 0 },         // 7: Astroid
-        { rx: 0, ry: 0, rz: 0 },         // 8: Sphere
-        { rx: 0, ry: 0, rz: 0 },         // 9: Scattered
-        { rx: 0, ry: 0, rz: 0 }          // 10: Envelope
+        { rx: 0, ry: 0, rz: 0 },         // 8: Envelope
+        { rx: 0, ry: 0, rz: 0 },         // 9: Sphere
+        { rx: 0, ry: -0.5236, rz: 0 }    // 10: Lightbulb
       ];
 
       // Update local timers for all shapes based on active/inactive states
@@ -845,8 +847,8 @@ export default function ParticleCanvas({ settings }: ParticleCanvasProps) {
         const targetX = cx + x2 * scale;
         let targetY = cy - y2 * scale;
 
-        // Wave drift in Scattered phase (Index 4 to 5 transition)
-        if (index === N - 1) {
+        // Wave drift in Scattered phase (Index 0 to 1 transition)
+        if (index === 0) {
           const waveTime = Date.now() * 0.001 + p.driftOffset;
           targetY += Math.sin(waveTime) * 15 * t;
         }

@@ -263,6 +263,11 @@ kbd {
   background-color: #ffffff !important;
 }
 
+.theme-white .experiment-route .badge-wrapper {
+  background: rgba(255, 255, 255, 0.75);
+  border-color: rgba(15, 23, 42, 0.08);
+}
+
 /* Scroll snap integration */
 html.scroll-snap {
   scroll-snap-type: y mandatory;
@@ -768,6 +773,8 @@ html.scroll-snap .experiment-route .section {
   height: auto;
   display: block;
   pointer-events: auto;
+  margin-top: -10%;
+  margin-bottom: -5%;
 }
 
 .experiment-route .badge-wrapper {
@@ -775,8 +782,10 @@ html.scroll-snap .experiment-route .section {
   align-items: center;
   gap: 8px;
   padding: 6px 18px;
-  background: rgba(34, 211, 238, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(15, 15, 15, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   border-radius: 99px;
   font-size: 0.78rem;
   font-weight: 600;
@@ -794,7 +803,7 @@ html.scroll-snap .experiment-route .section {
 }
 
 .experiment-route .hero-content p.hero-subtext {
-  font-size: 0.8rem;
+  font-size: 1rem;
   line-height: 1.6;
   color: var(--text-muted);
   max-width: 480px;
@@ -872,7 +881,7 @@ html.scroll-snap .experiment-route .section {
 .experiment-route .persistent-footer .footer-center {
   flex: 1;
   text-align: center;
-  font-size: 1rem;
+  font-size: 0.8rem;
   color: var(--text-muted);
   opacity: 0.7;
   white-space: nowrap;

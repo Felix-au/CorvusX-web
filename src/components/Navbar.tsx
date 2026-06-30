@@ -11,7 +11,10 @@ interface NavbarProps {
 export default function Navbar({ isDark: propIsDark, onThemeToggle }: NavbarProps) {
   const [scrolled,  setScrolled]  = useState(false)
   const [menuOpen,  setMenuOpen]  = useState(false)
-  const [localIsDark, setLocalIsDark] = useState(true)
+  const [localIsDark, setLocalIsDark] = useState(() => {
+    const saved = localStorage.getItem("corvusx-theme");
+    return saved === "light" ? false : true;
+  })
 
   const path = window.location.pathname
   const prefix = path === '/experiment' ? '' : '/experiment'
@@ -26,10 +29,12 @@ export default function Navbar({ isDark: propIsDark, onThemeToggle }: NavbarProp
   const isDark = propIsDark !== undefined ? propIsDark : localIsDark
 
   const handleToggle = () => {
+    const newDark = !isDark;
+    localStorage.setItem("corvusx-theme", newDark ? "dark" : "light");
     if (onThemeToggle) {
-      onThemeToggle(!isDark)
+      onThemeToggle(newDark)
     } else {
-      setLocalIsDark(!isDark)
+      setLocalIsDark(newDark)
     }
   }
 

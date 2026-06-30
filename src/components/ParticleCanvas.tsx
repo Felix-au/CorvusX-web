@@ -1290,7 +1290,7 @@ export default function ParticleCanvas({ settings }: ParticleCanvasProps) {
           let targetFlankY = stackY;
           if (card.isLoad && card.redIndex >= 0) {
             const isLeft = card.redIndex % 2 === 0;
-            const flankXOffset = isMobile ? (W * 0.36) : 210;
+            const flankXOffset = isMobile ? (W * 0.30) : 165;
             targetFlankX = isLeft ? logoX - flankXOffset : logoX + flankXOffset;
 
             const rowK = Math.floor(card.redIndex / 2); // row index 0, 1, 2, 3 in the flanking stack
@@ -1302,7 +1302,7 @@ export default function ParticleCanvas({ settings }: ParticleCanvasProps) {
           const screenX = lerp(stackX, targetFlankX, easeT);
           const screenY = lerp(stackY, targetFlankY, easeT);
 
-          const fontSize = lerp(isMobile ? 9.5 : 12, isMobile ? 6 : 8, easeT);
+          const fontSize = lerp(isMobile ? 9.5 : 12, isMobile ? 7.5 : 9.5, easeT);
 
           // Draw card if it is on screen
           if (screenX >= -100 && screenX <= W + 100 && screenY >= -100 && screenY <= H + 100) {
@@ -1322,11 +1322,11 @@ export default function ParticleCanvas({ settings }: ParticleCanvasProps) {
             // Background rounded rect style
             ctx!.fillStyle = theme === "black" ? "rgba(10, 10, 12, 0.78)" : "rgba(255, 255, 255, 0.88)";
             
-            // Border stroke: cyan glow if active pulling, else normal color bounds
+            // Border stroke: red outline glow if active pulling, else normal color bounds
             const isTransitioning = t_card > 0.0 && t_card < 1.0;
             if (isTransitioning) {
-              ctx!.strokeStyle = "rgba(34, 211, 238, 0.65)";
-              ctx!.shadowColor = "#22d3ee";
+              ctx!.strokeStyle = "rgba(239, 68, 68, 0.75)";
+              ctx!.shadowColor = "#ef4444";
               ctx!.shadowBlur = 8 * (1.0 - easeT);
             } else {
               ctx!.strokeStyle = card.isLoad ? "rgba(239, 68, 68, 0.35)" : "rgba(34, 197, 94, 0.35)";
@@ -1339,9 +1339,9 @@ export default function ParticleCanvas({ settings }: ParticleCanvasProps) {
             ctx!.stroke();
             ctx!.shadowBlur = 0; // reset glow
 
-            // Text color: cyan if transitioning, else red/green
+            // Text color: red if transitioning, else red/green
             if (isTransitioning) {
-              ctx!.fillStyle = "#22d3ee";
+              ctx!.fillStyle = "#f87171";
             } else {
               ctx!.fillStyle = card.isLoad ? "#f87171" : "#4ade80";
             }

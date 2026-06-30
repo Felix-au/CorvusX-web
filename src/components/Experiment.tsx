@@ -6,13 +6,21 @@ import lightLogo from "../assets/light.png";
 import darkLogo from "../assets/dark.png";
 
 export default function Experiment() {
-  const [theme, setTheme] = useState<"black" | "white">("black");
+  const [theme, setTheme] = useState<"black" | "white">(() => {
+    const saved = localStorage.getItem("corvusx-theme");
+    return saved === "light" ? "white" : "black";
+  });
   const [activeSection, setActiveSection] = useState(0);
 
   const settings: AppSettings = {
     ...DEFAULT_SETTINGS,
     theme: theme,
   };
+
+  // Sync theme to localStorage
+  useEffect(() => {
+    localStorage.setItem("corvusx-theme", theme === "white" ? "light" : "dark");
+  }, [theme]);
 
   // Sync settings (theme and scroll snapping) to HTML root classes
   useEffect(() => {

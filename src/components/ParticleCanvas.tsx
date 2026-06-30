@@ -652,14 +652,14 @@ export default function ParticleCanvas({ settings }: ParticleCanvasProps) {
       // Row 0 (Top row of stack - all red)
       { text: "Syntax", isLoad: true, redIndex: 0, angle: 0 },
       { text: "Formula", isLoad: true, redIndex: 1, angle: Math.PI * 0.25 },
-      { text: "API Docs", isLoad: true, redIndex: 2, angle: Math.PI * 0.5 },
-      { text: "Dates", isLoad: true, redIndex: 3, angle: Math.PI * 0.75 },
-      { text: "Commands", isLoad: true, redIndex: 4, angle: Math.PI * 1.0 },
+      { text: "API Docs", isLoad: true, redIndex: 6, angle: Math.PI * 0.5 },
+      { text: "Dates", isLoad: true, redIndex: 7, angle: Math.PI * 0.75 },
+      { text: "Commands", isLoad: true, redIndex: 2, angle: Math.PI * 1.0 },
 
       // Row 1 (Middle row of stack - all red)
-      { text: "References", isLoad: true, redIndex: 5, angle: Math.PI * 1.25 },
-      { text: "Error Codes", isLoad: true, redIndex: 6, angle: Math.PI * 1.5 },
-      { text: "Shortcuts", isLoad: true, redIndex: 7, angle: Math.PI * 1.75 },
+      { text: "References", isLoad: true, redIndex: 3, angle: Math.PI * 1.25 },
+      { text: "Error Codes", isLoad: true, redIndex: 4, angle: Math.PI * 1.5 },
+      { text: "Shortcuts", isLoad: true, redIndex: 5, angle: Math.PI * 1.75 },
 
       // Row 2 (Bottom row of stack - all green)
       { text: "Creativity", isLoad: false, redIndex: -1, angle: 0 },
@@ -1131,7 +1131,7 @@ export default function ParticleCanvas({ settings }: ParticleCanvasProps) {
       // ─── Render Cognitive Function HUD (Only in Section 0) ────────────────
       if (index === 0) {
         const hudX = isMobile ? W * 0.5 : W * 0.72;
-        const hudY = isMobile ? H * 0.78 : H * 0.84;
+        const hudY = H - (isMobile ? 42 : 62);
 
         const isOverloaded = timelineTime < ALL_DRIFTED_TIME;
         const blinkOpacity = 0.35 + Math.abs(Math.sin(now * 0.003)) * 0.65;
@@ -1222,7 +1222,7 @@ export default function ParticleCanvas({ settings }: ParticleCanvasProps) {
         }
 
         const hudX = isMobile ? W * 0.5 : W * 0.72;
-        const hudY = isMobile ? H * 0.78 : H * 0.84;
+        const hudY = H - (isMobile ? 42 : 62);
         const stackYBase = hudY - (isMobile ? 24 : 30);
 
         // Precalculate stacked card coordinates in horizontally centered rows (5, 3, 5)
@@ -1290,7 +1290,7 @@ export default function ParticleCanvas({ settings }: ParticleCanvasProps) {
           let targetFlankY = stackY;
           if (card.isLoad && card.redIndex >= 0) {
             const isLeft = card.redIndex % 2 === 0;
-            const flankXOffset = isMobile ? 65 : 105;
+            const flankXOffset = isMobile ? (W * 0.36) : 210;
             targetFlankX = isLeft ? logoX - flankXOffset : logoX + flankXOffset;
 
             const rowK = Math.floor(card.redIndex / 2); // row index 0, 1, 2, 3 in the flanking stack

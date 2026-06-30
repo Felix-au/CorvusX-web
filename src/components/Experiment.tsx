@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import ParticleCanvas from "./ParticleCanvas";
 import { type AppSettings, DEFAULT_SETTINGS } from "../types";
 import Navbar from "./Navbar";
-import lightLogo from "../assets/light.png";
 import darkLogo from "../assets/dark.png";
 
 export default function Experiment() {
@@ -95,7 +94,27 @@ export default function Experiment() {
             <section key={index} className="section first-slide-container">
               <Navbar isDark={theme === "black"} onThemeToggle={(dark) => setTheme(dark ? "black" : "white")} />
               <div className="hero-experiment-wrapper">
-                <img src={theme === "black" ? darkLogo : lightLogo} className="hero-logo" alt="CorvusX Logo" />
+                <div className="hero-content">
+                  <div className="badge-wrapper">
+                    <span className="badge-dot" />
+                    <span>STEALTH DESKTOP AI</span>
+                  </div>
+                  <img src={darkLogo} className="hero-logo" alt="CorvusX Logo" />
+                  <p className="hero-subtext">
+                    CorvusX is an AI-powered desktop assistant designed to help you think clearly, solve optimally, and perform with absolute confidence.
+                  </p>
+                  <div className="hero-actions">
+                    <a
+                      href="https://github.com/Felix-au/CorvusX-Intelligence-in-the-Shadows/releases/latest"
+                      className="btn-primary"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <span>Download Latest Release</span>
+                    </a>
+                  </div>
+                  <p className="hero-meta">Requires Windows 10/11 or macOS 12+</p>
+                </div>
               </div>
             </section>
           );
@@ -113,7 +132,7 @@ export default function Experiment() {
         </div>
         <div className="footer-right">
           <a
-            href="https://github.com"
+            href="https://github.com/Felix-au/CorvusX-Intelligence-in-the-Shadows"
             target="_blank"
             rel="noopener noreferrer"
             className="github-link"

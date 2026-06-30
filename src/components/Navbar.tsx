@@ -65,6 +65,15 @@ export default function Navbar({ isDark: propIsDark, onThemeToggle }: NavbarProp
             ))}
           </ul>
 
+          <a
+            href="https://github.com/Felix-au/CorvusX-Intelligence-in-the-Shadows/releases/latest"
+            className={styles.cta}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Download
+          </a>
+
           {/* Theme toggle */}
           <motion.button
             className={styles.themeToggle}
@@ -115,6 +124,15 @@ export default function Navbar({ isDark: propIsDark, onThemeToggle }: NavbarProp
                   {l.label}
                 </a>
               ))}
+              <a
+                href="https://github.com/Felix-au/CorvusX-Intelligence-in-the-Shadows/releases/latest"
+                className={styles.mobileCta}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => setMenuOpen(false)}
+              >
+                Download
+              </a>
               <button className={styles.mobileThemeRow} onClick={handleToggle}>
                 {isDark ? <Sun size={15} /> : <Moon size={15} />}
                 {isDark ? 'Switch to Light Theme' : 'Switch to Dark Theme'}

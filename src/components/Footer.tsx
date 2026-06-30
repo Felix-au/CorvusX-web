@@ -22,7 +22,7 @@ export default function Footer() {
           <a href="#demo">Demo</a>
           <a href="#features">Features</a>
           <a href="#how-it-works">How it Works</a>
-          <a href="https://github.com" target="_blank" rel="noopener noreferrer">GitHub</a>
+          <a href="https://github.com/Felix-au/CorvusX-Intelligence-in-the-Shadows" target="_blank" rel="noopener noreferrer">GitHub</a>
         </div>
       </div>
     </footer>

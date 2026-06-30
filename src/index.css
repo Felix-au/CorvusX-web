@@ -696,7 +696,7 @@ html.scroll-snap .experiment-route .section {
 }
 
 .experiment-route .hero-subtext {
-  font-size: 0.8rem;
+  font-size: 0.72rem;
   line-height: 1.6;
   color: var(--text-muted);
   max-width: 480px;

@@ -185,7 +185,14 @@
 }
 
 @media (max-width: 768px) {
+  .inner { gap: 12px; }
   .links, .cta { display: none; }
-  .themeToggle { display: none; }
-  .hamburger { display: flex; }
+  .themeToggle {
+    display: flex;
+    margin-left: auto;
+  }
+  .hamburger {
+    display: flex;
+    margin-left: 0;
+  }
 }

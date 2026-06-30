@@ -22,6 +22,7 @@ interface ParticleData {
   damping: number;
   driftOffset: number;
   scaleFactor: number;
+  tempY?: number;
 }
 
 interface ParticleCanvasProps {
@@ -640,6 +641,34 @@ export default function ParticleCanvas({ settings }: ParticleCanvasProps) {
     const localTimes = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
     let animId: number;
 
+    interface CardData {
+      text: string;
+      angle: number;
+      radiusOffset: number;
+      speed: number;
+      isLoad: boolean;
+      yOffset: number;
+    }
+    const cards: CardData[] = [
+      { text: "Syntax", angle: 0, radiusOffset: 1.0, speed: 0.008, isLoad: true, yOffset: -30 },
+      { text: "Formula", angle: Math.PI * 0.4, radiusOffset: 1.15, speed: 0.006, isLoad: true, yOffset: 40 },
+      { text: "API Docs", angle: Math.PI * 0.8, radiusOffset: 0.9, speed: 0.007, isLoad: true, yOffset: -50 },
+      { text: "Dates", angle: Math.PI * 1.2, radiusOffset: 1.05, speed: 0.005, isLoad: true, yOffset: 20 },
+      { text: "Commands", angle: Math.PI * 1.6, radiusOffset: 1.2, speed: 0.009, isLoad: true, yOffset: -10 },
+      { text: "References", angle: Math.PI * 0.2, radiusOffset: 0.95, speed: 0.004, isLoad: true, yOffset: 60 },
+      { text: "Error Codes", angle: Math.PI * 0.7, radiusOffset: 1.1, speed: 0.008, isLoad: true, yOffset: -40 },
+      { text: "Shortcuts", angle: Math.PI * 1.3, radiusOffset: 1.0, speed: 0.007, isLoad: true, yOffset: 15 },
+      
+      { text: "Creativity", angle: Math.PI * 0.1, radiusOffset: 1.05, speed: 0.005, isLoad: false, yOffset: -25 },
+      { text: "Reasoning", angle: Math.PI * 0.5, radiusOffset: 0.9, speed: 0.004, isLoad: false, yOffset: 45 },
+      { text: "Strategy", angle: Math.PI * 0.9, radiusOffset: 1.15, speed: 0.006, isLoad: false, yOffset: -35 },
+      { text: "Concepts", angle: Math.PI * 1.4, radiusOffset: 1.0, speed: 0.005, isLoad: false, yOffset: 35 },
+      { text: "Problem Solving", angle: Math.PI * 1.8, radiusOffset: 1.2, speed: 0.004, isLoad: false, yOffset: -15 }
+    ];
+
+    const neuralWaves: { progress: number; speed: number; intensity: number }[] = [];
+    let lastWaveSpawn = 0;
+
     function animate() {
       ctx!.clearRect(0, 0, W, H);
       const now = Date.now();
@@ -873,6 +902,27 @@ export default function ParticleCanvas({ settings }: ParticleCanvasProps) {
       const rotateX = lerp(rx1, rx2, t);
       const rotateZ = lerp(rz1, rz2, t);
 
+      // Brain active factor determines how much we are showing the brain slide (section 0)
+      const brainActiveFactor = index === 0 ? (1.0 - t) : 0;
+
+      // Dim, slow brain pulse on size and opacity
+      const pulseSizeFactor = 1.0 + Math.sin(now * 0.002) * 0.12 * brainActiveFactor;
+      const pulseOpacityFactor = 1.0 + Math.sin(now * 0.002) * 0.18 * brainActiveFactor;
+
+      // Spawn neural waves if brain is active
+      if (index === 0 && now - lastWaveSpawn > 800) {
+        neuralWaves.push({ progress: 0.0, speed: 0.025, intensity: 1.2 });
+        lastWaveSpawn = now;
+      }
+
+      // Update neural waves
+      for (let w = neuralWaves.length - 1; w >= 0; w--) {
+        neuralWaves[w].progress += neuralWaves[w].speed;
+        if (neuralWaves[w].progress > 1.0) {
+          neuralWaves.splice(w, 1);
+        }
+      }
+
       // ─── Update Loop ──────────────────────────────────────────────────────
       for (let i = 0; i < currentCount; i++) {
         const p = particles[i];
@@ -883,6 +933,7 @@ export default function ParticleCanvas({ settings }: ParticleCanvasProps) {
         const rx = lerp(pt1.x, pt2.x, t);
         const ry = lerp(pt1.y, pt2.y, t);
         const rz = lerp(pt1.z, pt2.z, t);
+        p.tempY = ry;
 
         // 3D Rotation Matrices
         const cosY = Math.cos(rotateY);
@@ -964,10 +1015,55 @@ export default function ParticleCanvas({ settings }: ParticleCanvasProps) {
         const p = particles[i];
         if (p.shape !== "circle") continue;
 
-        ctx!.globalAlpha = p.opacity * settingsRef.current.particleOpacity;
-        const size = p.size * p.scaleFactor * sizeMultiplier * desktopSizeScale;
-        const colorHex = currentColors[p.colorIndex];
-        const sprite = sprites[colorHex];
+        let colorHex = currentColors[p.colorIndex];
+        let particleSizeMultiplier = 1.0;
+
+        // Neural waves logic on active brain (Shape 0)
+        if (index === 0 && p.tempY !== undefined) {
+          // Brain Y coordinates range from roughly -0.65 to 0.65 after centering
+          const normY = (p.tempY + 0.65) / 1.3;
+          for (let w = 0; w < neuralWaves.length; w++) {
+            const wave = neuralWaves[w];
+            const dist = Math.abs(normY - wave.progress);
+            if (dist < 0.08) {
+              const factor = (0.08 - dist) / 0.08;
+              colorHex = "#22d3ee"; // glowing cyan
+              particleSizeMultiplier = 1.0 + factor * 1.5;
+            }
+          }
+        }
+
+        ctx!.globalAlpha = Math.min(1.0, p.opacity * settingsRef.current.particleOpacity * pulseOpacityFactor);
+        const size = p.size * p.scaleFactor * sizeMultiplier * desktopSizeScale * pulseSizeFactor * particleSizeMultiplier;
+        let sprite = sprites[colorHex];
+        if (!sprite) {
+          const offscreen = document.createElement("canvas");
+          offscreen.width = spriteSize;
+          offscreen.height = spriteSize;
+          const octx = offscreen.getContext("2d");
+          if (octx) {
+            octx.clearRect(0, 0, spriteSize, spriteSize);
+            const r = spriteSize / 2;
+            const grad = octx.createRadialGradient(
+              r - r * 0.3,
+              r - r * 0.3,
+              r * 0.1,
+              r,
+              r,
+              r
+            );
+            grad.addColorStop(0, "#ffffff");
+            grad.addColorStop(0.15, colorHex);
+            grad.addColorStop(0.95, colorHex);
+            grad.addColorStop(1.0, "rgba(0, 0, 0, 0)");
+            octx.fillStyle = grad;
+            octx.beginPath();
+            octx.arc(r, r, r, 0, Math.PI * 2);
+            octx.fill();
+          }
+          sprites[colorHex] = offscreen;
+          sprite = offscreen;
+        }
         if (sprite) {
           ctx!.drawImage(
             sprite,
@@ -980,7 +1076,7 @@ export default function ParticleCanvas({ settings }: ParticleCanvasProps) {
       }
 
       // ─── Render vector particles (triangle, diamond, square) ──────────────
-      ctx!.globalAlpha = 0.68 * settingsRef.current.particleOpacity;
+      ctx!.globalAlpha = 0.68 * settingsRef.current.particleOpacity * pulseOpacityFactor;
 
       for (let c = 0; c < 4; c++) {
         const colorHex = currentColors[c];
@@ -995,7 +1091,7 @@ export default function ParticleCanvas({ settings }: ParticleCanvasProps) {
             const p = particles[i];
             if (p.colorIndex !== c || p.shape !== shape) continue;
 
-            const size = p.size * p.scaleFactor * sizeMultiplier * desktopSizeScale;
+            const size = p.size * p.scaleFactor * sizeMultiplier * desktopSizeScale * pulseSizeFactor;
             const halfSize = size / 2;
 
             switch (shape) {
@@ -1021,6 +1117,97 @@ export default function ParticleCanvas({ settings }: ParticleCanvasProps) {
           ctx!.fill();
         });
       }
+
+      // ─── Render Orbiting Cards ───────────────────────────────────────────
+      // Get Logo screen coordinates
+      const logoEl = document.querySelector('.hero-experiment-wrapper .hero-logo');
+      let logoX = isMobile ? W * 0.5 : W * 0.25; // fallback center of left 50%
+      let logoY = isMobile ? H * 0.22 : H * 0.5; // fallback center vertically
+      if (logoEl) {
+        const rect = logoEl.getBoundingClientRect();
+        logoX = rect.left + rect.width / 2;
+        logoY = rect.top + rect.height / 2;
+      }
+
+      // Calculate transition factor (smoothly morph from brain to logo over scroll ratio 0.0 -> 0.1)
+      const t_transition = Math.min(1.0, currentScrollRatio / 0.1);
+      // Smoothstep easing
+      const easeT = t_transition * t_transition * (3 - 2 * t_transition);
+
+      const brainCenterX = configs[0].cx;
+      const brainCenterY = configs[0].cy;
+      const currentScale = configs[0].scale;
+
+      const targetCenterX = lerp(brainCenterX, logoX, easeT);
+      const targetCenterY = lerp(brainCenterY, logoY, easeT);
+      const targetRadius3D = lerp(0.72, isMobile ? 35 : 55, easeT);
+      const currentScaleFactor = lerp(currentScale, 1.0, easeT);
+      const targetFontSize = lerp(isMobile ? 10 : 13, isMobile ? 6 : 8, easeT);
+
+      // Render cards
+      cards.forEach((card) => {
+        // Update angle
+        card.angle += card.speed;
+
+        const targetY3D = lerp(card.yOffset / currentScale, (card.yOffset * 0.22) / 1.0, easeT);
+
+        // Position coordinates in 3D relative to the target center
+        const x = Math.cos(card.angle) * targetRadius3D * card.radiusOffset;
+        const z = Math.sin(card.angle) * targetRadius3D * card.radiusOffset;
+        const y = targetY3D;
+
+        // Use rotation matrices of active state
+        const cosY = Math.cos(rotateY);
+        const sinY = Math.sin(rotateY);
+        const cx1 = x * cosY - z * sinY;
+        const cz1 = x * sinY + z * cosY;
+
+        const cosX = Math.cos(rotateX);
+        const sinX = Math.sin(rotateX);
+        const cy1 = y * cosX - cz1 * sinX;
+        const cz2 = y * sinX + cz1 * cosX;
+
+        const cosZ = Math.cos(rotateZ);
+        const sinZ = Math.sin(rotateZ);
+        const cx2 = cx1 * cosZ - cy1 * sinZ;
+        const cy2 = cx1 * sinZ + cy1 * cosZ;
+
+        // Perspective projection
+        const fov = 400;
+        const perspective = fov / Math.max(50, fov + cz2 * 250);
+        const screenX = targetCenterX + cx2 * currentScaleFactor * perspective;
+        const screenY = targetCenterY - cy2 * currentScaleFactor * perspective;
+
+        // Draw card if it's on screen
+        if (screenX >= -100 && screenX <= W + 100 && screenY >= -100 && screenY <= H + 100) {
+          ctx!.font = `600 ${Math.round(targetFontSize)}px 'Outfit', 'Inter', system-ui, sans-serif`;
+          const textWidth = ctx!.measureText(card.text).width;
+          const px = targetFontSize * 0.7;
+          const py = targetFontSize * 0.45;
+          const rectWidth = textWidth + px * 2;
+          const rectHeight = targetFontSize + py * 2;
+
+          const rx = screenX - rectWidth / 2;
+          const ry = screenY - rectHeight / 2;
+
+          ctx!.globalAlpha = (1.0 - easeT * 0.3) * settingsRef.current.particleOpacity;
+          
+          // Background rounded rect
+          ctx!.fillStyle = theme === "black" ? "rgba(10, 10, 12, 0.78)" : "rgba(255, 255, 255, 0.88)";
+          ctx!.strokeStyle = card.isLoad ? "rgba(34, 211, 238, 0.35)" : "rgba(139, 92, 246, 0.35)";
+          ctx!.lineWidth = 1.0;
+          ctx!.beginPath();
+          ctx!.roundRect(rx, ry, rectWidth, rectHeight, targetFontSize * 0.5);
+          ctx!.fill();
+          ctx!.stroke();
+
+          // Draw Text
+          ctx!.fillStyle = card.isLoad ? "#22d3ee" : "#a78bfa";
+          ctx!.textBaseline = "middle";
+          ctx!.textAlign = "center";
+          ctx!.fillText(card.text, screenX, screenY + 0.5);
+        }
+      });
 
       ctx!.globalAlpha = 1.0;
       animId = requestAnimationFrame(animate);

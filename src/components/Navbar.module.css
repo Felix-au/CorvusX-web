@@ -91,20 +91,18 @@
 .themeToggle {
   width: 36px;
   height: 36px;
-  border-radius: 10px;
-  background: var(--card);
-  border: 1px solid var(--border);
+  background: transparent;
+  border: none;
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--muted);
-  transition: background 0.2s, color 0.2s, border-color 0.2s;
+  transition: color 0.2s;
   flex-shrink: 0;
+  cursor: pointer;
 }
 .themeToggle:hover {
-  background: var(--border);
   color: var(--text);
-  border-color: var(--border-hover);
 }
 .themeToggle span { display: flex; align-items: center; justify-content: center; }
 

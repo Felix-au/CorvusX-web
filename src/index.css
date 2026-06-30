@@ -728,19 +728,69 @@ html.scroll-snap .experiment-route .section {
   margin: 0;
 }
 
-/* Persistent Copyright Footer at bottom center */
+/* Persistent Copyright Footer */
 .experiment-route .persistent-footer {
   position: fixed;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
   z-index: 100;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 48px;
+  box-sizing: border-box;
+  pointer-events: none;
+  font-family: var(--font-family);
+  background: var(--glass-bg);
+  border-top: 1px solid var(--glass-border);
+  border-radius: 16px 16px 0 0;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.experiment-route .persistent-footer .footer-left {
+  flex: 1;
+}
+
+.experiment-route .persistent-footer .footer-center {
+  flex: 1;
+  text-align: center;
   font-size: 0.8rem;
   color: var(--text-muted);
   opacity: 0.7;
-  pointer-events: none;
-  font-family: var(--font-family);
   white-space: nowrap;
+}
+
+.experiment-route .persistent-footer .footer-right {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.experiment-route .persistent-footer .github-link {
+  pointer-events: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  opacity: 0.7;
+  transition: opacity 0.2s ease, color 0.2s ease;
+}
+
+.experiment-route .persistent-footer .github-link:hover {
+  opacity: 1;
+  color: var(--cyan);
+}
+
+.experiment-route .persistent-footer .github-icon {
+  width: 16px;
+  height: 16px;
+  fill: currentColor;
 }
 
 @media (max-width: 768px) {
@@ -759,7 +809,21 @@ html.scroll-snap .experiment-route .section {
   }
 
   .experiment-route .persistent-footer {
+    bottom: 0;
+    padding: 10px 16px;
+    border-radius: 12px 12px 0 0;
+  }
+
+  .experiment-route .persistent-footer .footer-center {
     font-size: 0.72rem;
-    bottom: 12px;
+  }
+
+  .experiment-route .persistent-footer .github-link {
+    font-size: 0.72rem;
+  }
+
+  .experiment-route .persistent-footer .github-icon {
+    width: 14px;
+    height: 14px;
   }
 }

@@ -9,8 +9,6 @@ import Download from './components/Download'
 import Footer from './components/Footer'
 
 import Experiment from './components/Experiment'
-import VersionSwitcher from './components/VersionSwitcher'
-
 function App() {
   const path = window.location.pathname
 
@@ -39,7 +37,6 @@ function App() {
   return (
     <>
       {renderContent()}
-      <VersionSwitcher />
     </>
   )
 }

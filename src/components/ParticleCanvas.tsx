@@ -1194,8 +1194,43 @@ export default function ParticleCanvas({ settings }: ParticleCanvasProps) {
 
         const hudX = isMobile ? W * 0.5 : W * 0.72;
         const hudY = isMobile ? H * 0.78 : H * 0.84;
-        const stackX = hudX;
         const stackYBase = hudY - (isMobile ? 24 : 30);
+
+        // Precalculate stacked card coordinates in horizontally centered rows (5, 5, 3)
+        const hGap = isMobile ? 8 : 12;
+        const vGap = isMobile ? 8 : 12;
+        const baseFontSize = isMobile ? 9.5 : 12;
+        const baseRectHeight = baseFontSize + baseFontSize * 0.9;
+
+        const stackCoords: { x: number; y: number }[] = [];
+        const rowIndices = [[0, 1, 2, 3, 4], [5, 6, 7, 8, 9], [10, 11, 12]];
+
+        ctx!.font = `600 ${Math.round(baseFontSize)}px 'Outfit', 'Inter', system-ui, sans-serif`;
+
+        rowIndices.forEach((row, r) => {
+          // Row 2 is bottom, Row 1 is middle, Row 0 is top
+          const offsetMultiplier = 2 - r;
+          const rowY = stackYBase - offsetMultiplier * (baseRectHeight + vGap);
+
+          let rowWidth = 0;
+          const cardWidths = row.map((idx) => {
+            const txtWidth = ctx!.measureText(cards[idx].text).width;
+            const w = txtWidth + baseFontSize * 1.3;
+            rowWidth += w;
+            return w;
+          });
+          rowWidth += (row.length - 1) * hGap;
+
+          let currentX = hudX - rowWidth / 2;
+          row.forEach((idx, colIndex) => {
+            const w = cardWidths[colIndex];
+            stackCoords[idx] = {
+              x: currentX + w / 2,
+              y: rowY
+            };
+            currentX += w + hGap;
+          });
+        });
 
         cards.forEach((card, i) => {
           let t_card = 0.0;
@@ -1214,8 +1249,9 @@ export default function ParticleCanvas({ settings }: ParticleCanvasProps) {
           // Smoothstep easing
           const easeT = t_card * t_card * (3 - 2 * t_card);
 
-          // Position in stack
-          const stackY = stackYBase - i * (isMobile ? 22 : 26);
+          // Get coordinates
+          const stackX = stackCoords[i].x;
+          const stackY = stackCoords[i].y;
 
           // Position orbiting the logo
           const theta = card.angle + timelineTime * 0.001;

@@ -55,14 +55,12 @@ function MarkdownBlock({ text, light }: { text: string; light?: boolean }) {
   const lines = text.split('\n')
   const nodes: React.ReactNode[] = []
   let inCode = false
-  let codeLang = ''
   let codeLines: string[] = []
 
   lines.forEach((line, i) => {
     if (line.startsWith('```')) {
       if (!inCode) {
         inCode = true
-        codeLang = line.slice(3).trim()
         codeLines = []
       } else {
         const codeStr = codeLines.join('\n')
@@ -72,7 +70,6 @@ function MarkdownBlock({ text, light }: { text: string; light?: boolean }) {
           </pre>
         )
         inCode = false
-        codeLang = ''
         codeLines = []
       }
       return
@@ -412,7 +409,7 @@ export default function DemoWizard() {
                             { label:'Clear UI Clutter', sub:'Clear chat and audio results from UI (retains context).', keys:['⌘/Ctrl','U'] },
                             { label:'Copy Latest Response', sub:'Copy latest text response to clipboard.', keys:['⌘/Ctrl','Alt','C'] },
                             { label:'Toggle Voice Recording', sub:'Start or stop voice input recording globally.', keys:['⌘/Ctrl','Shift','V'] },
-                            { label:'Ghost Keyboard Mode', sub:'Passively mirror global keystrokes into the overlay's chat input.', keys:['⌘/Ctrl','Alt','X'] },
+                            { label:'Ghost Keyboard Mode', sub:"Passively mirror global keystrokes into the overlay's chat input.", keys:['⌘/Ctrl','Alt','X'] },
                             { label:'Ghost Writer (Simulate Typing)', sub:'Simulate typing the latest response character-by-character.', keys:['⌘/Ctrl','Alt','K'] },
                           ].map((sc,i) => (
                             <div key={i} className={styles.scItem}>
@@ -545,7 +542,7 @@ def twoSum(nums, target):
                               <div key={i} className={`${styles.chatRow} ${msg.role==='user'?styles.chatRowUser:styles.chatRowGemini}`}>
                                 <div className={`${styles.bubble} ${msg.role==='user'?styles.bubbleUser:styles.bubbleGemini}`}>
                                   {msg.role==='gemini'
-                                    ? <MarkdownBlock text={msg.text} light={msg.role==='user'}/>
+                                    ? <MarkdownBlock text={msg.text} light={false}/>
                                     : <span className={styles.bubblePlainText}>{msg.text}</span>
                                   }
                                 </div>

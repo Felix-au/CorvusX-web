@@ -45,6 +45,9 @@
   box-shadow: var(--nav-glow);
   padding: 8px 0;
 }
+.scrolled.menuOpen {
+  border-radius: 20px;
+}
 .scrolled .inner {
   padding: 0 24px;
 }

@@ -56,7 +56,7 @@ export default function Navbar({ isDark: propIsDark, onThemeToggle }: NavbarProp
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.6, ease: 'easeOut' }}
     >
-      <nav className={`${styles.navbar} ${scrolled ? styles.scrolled : ''}`}>
+      <nav className={`${styles.navbar} ${scrolled ? styles.scrolled : ''} ${menuOpen ? styles.menuOpen : ''}`}>
         <div className={styles.inner}>
           {/* Branding Heading */}
           <a href={path === '/experiment' ? '/' : '#'} className={styles.logo}>

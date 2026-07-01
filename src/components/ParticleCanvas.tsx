@@ -851,9 +851,9 @@ export default function ParticleCanvas({ settings }: ParticleCanvasProps) {
       let targetInfluenceX = 0;
       let targetInfluenceY = 0;
       if (hasGyro && settingsRef.current.gyroEnabled) {
-        // 3× gyroscope influence
-        targetInfluenceX = gyroX * 3.0;
-        targetInfluenceY = gyroY * 3.0;
+        // gyroscope influence
+        targetInfluenceX = gyroX;
+        targetInfluenceY = gyroY;
       } else if (mouse.active) {
         // 3× mouse hover influence
         targetInfluenceX = ((mouse.x - W / 2) / (W / 2)) * 0.24;

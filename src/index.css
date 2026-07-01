@@ -274,7 +274,7 @@ html.scroll-snap {
 }
 @media (max-width: 768px) {
   html.scroll-snap {
-    scroll-snap-type: y proximity;
+    scroll-snap-type: none;
   }
 }
 

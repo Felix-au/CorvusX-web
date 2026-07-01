@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import ParticleCanvas from "./ParticleCanvas";
 import { type AppSettings, DEFAULT_SETTINGS } from "../types";
 import Navbar from "./Navbar";
@@ -11,6 +11,7 @@ export default function Experiment() {
     return saved === "light" ? "white" : "black";
   });
   const [activeSection, setActiveSection] = useState(0);
+  const isProgrammaticScrollRef = useRef(false);
 
   const settings: AppSettings = {
     ...DEFAULT_SETTINGS,
@@ -37,8 +38,48 @@ export default function Experiment() {
     };
   }, [theme]);
 
-  // Track scroll position to update active dot indicator
+  // Track scroll position to update active dot indicator and handle JS-based mobile snapping
   useEffect(() => {
+    let isMobile = window.innerWidth <= 768;
+    let scrollTimeout: number | null = null;
+    let lastScrollTop = window.scrollY;
+    let isTouching = false;
+
+    const triggerSnapCheck = () => {
+      if (isTouching) return; // Don't snap while user is touching the screen
+      if (isProgrammaticScrollRef.current) return;
+
+      const currentScrollTop = window.scrollY;
+      const sectionHeight = window.innerHeight;
+      
+      if (currentScrollTop % sectionHeight === 0) return;
+
+      const rawIndex = currentScrollTop / sectionHeight;
+      const baseIndex = Math.floor(rawIndex);
+      const fraction = rawIndex - baseIndex;
+      
+      const delta = currentScrollTop - lastScrollTop;
+      const scrollingDown = delta > 0;
+
+      let targetIndex = baseIndex;
+      if (scrollingDown) {
+        // Snaps to next section if scrolled down by more than 25% (0.25)
+        targetIndex = fraction > 0.25 ? baseIndex + 1 : baseIndex;
+      } else {
+        // Snaps to previous section if scrolled up by more than 25% (fraction < 0.75)
+        targetIndex = fraction < 0.75 ? baseIndex : baseIndex + 1;
+      }
+
+      targetIndex = Math.max(0, Math.min(10, targetIndex));
+
+      window.scrollTo({
+        top: targetIndex * sectionHeight,
+        behavior: "smooth"
+      });
+
+      lastScrollTop = targetIndex * sectionHeight;
+    };
+
     const handleScroll = () => {
       const scrollTop = window.scrollY || document.documentElement.scrollTop;
       const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
@@ -47,22 +88,59 @@ export default function Experiment() {
       const N = 10; // shapes count - 1 (11 shapes total)
       const index = Math.min(Math.round(ratio * N), N);
       setActiveSection(index);
+
+      isMobile = window.innerWidth <= 768;
+      if (!isMobile) return;
+
+      if (scrollTimeout) {
+        window.clearTimeout(scrollTimeout);
+      }
+
+      scrollTimeout = window.setTimeout(triggerSnapCheck, 100);
+      lastScrollTop = scrollTop;
+    };
+
+    const handleTouchStart = () => {
+      isTouching = true;
+    };
+
+    const handleTouchEnd = () => {
+      isTouching = false;
+      // Start snap timer immediately after releasing touch
+      if (scrollTimeout) {
+        window.clearTimeout(scrollTimeout);
+      }
+      scrollTimeout = window.setTimeout(triggerSnapCheck, 100);
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("touchstart", handleTouchStart, { passive: true });
+    window.addEventListener("touchend", handleTouchEnd, { passive: true });
+    
     // Run once initially to capture load state
     handleScroll();
 
-    return () => window.removeEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("touchstart", handleTouchStart);
+      window.removeEventListener("touchend", handleTouchEnd);
+      if (scrollTimeout) window.clearTimeout(scrollTimeout);
+    };
   }, []);
 
   const scrollToSection = (index: number) => {
+    isProgrammaticScrollRef.current = true;
     const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
     const targetScroll = (index / 10) * scrollHeight;
     window.scrollTo({
       top: targetScroll,
       behavior: "smooth",
     });
+
+    // Reset programmatic scroll flag after transition finishes (~800ms)
+    setTimeout(() => {
+      isProgrammaticScrollRef.current = false;
+    }, 800);
   };
 
   const shapesMetadata = [

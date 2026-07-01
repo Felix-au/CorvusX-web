@@ -63,11 +63,11 @@ export default function Experiment() {
 
       let targetIndex = baseIndex;
       if (scrollingDown) {
-        // Snaps to next section if scrolled down by more than 25% (0.25)
-        targetIndex = fraction > 0.25 ? baseIndex + 1 : baseIndex;
+        // Snaps to next section if scrolled down by more than 20% (0.20)
+        targetIndex = fraction > 0.20 ? baseIndex + 1 : baseIndex;
       } else {
-        // Snaps to previous section if scrolled up by more than 25% (fraction < 0.75)
-        targetIndex = fraction < 0.75 ? baseIndex : baseIndex + 1;
+        // Snaps to previous section if scrolled up by more than 20% (fraction < 0.80)
+        targetIndex = fraction < 0.80 ? baseIndex : baseIndex + 1;
       }
 
       targetIndex = Math.max(0, Math.min(10, targetIndex));

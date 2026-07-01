@@ -699,12 +699,10 @@ export default function ParticleCanvas({ settings }: ParticleCanvasProps) {
       timelineTime += delta;
 
       const scrollTop = window.scrollY || document.documentElement.scrollTop;
-      const scrollHeight =
-        document.documentElement.scrollHeight - window.innerHeight;
+      const isMobile = W < 768;
+      const scrollHeight = isMobile ? H * 10 : (document.documentElement.scrollHeight - window.innerHeight);
       const targetScrollRatio = scrollHeight > 0 ? scrollTop / scrollHeight : 0;
       currentScrollRatio += (targetScrollRatio - currentScrollRatio) * 0.05;
-
-      const isMobile = W < 768;
 
       // Real-time configurations from ref
       const currentCount = Math.min(particles.length, settingsRef.current.particleCount);

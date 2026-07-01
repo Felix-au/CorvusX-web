@@ -272,11 +272,7 @@ kbd {
 html.scroll-snap {
   scroll-snap-type: y mandatory;
 }
-@media (max-width: 768px) {
-  html.scroll-snap {
-    scroll-snap-type: none;
-  }
-}
+
 
 .experiment-route .canvas-container {
   position: fixed;

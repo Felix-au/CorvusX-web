@@ -648,7 +648,6 @@ export default function ParticleCanvas({ settings }: ParticleCanvasProps) {
       life: number; size: number; logoX: number; logoY: number;
     }> = [];
     const cardAbsorbed: boolean[] = new Array(8).fill(false);
-    let prevScrollRatio = 0;
     let wasInSection0 = true; // used for replay detection
 
     interface CardData {
@@ -696,7 +695,6 @@ export default function ParticleCanvas({ settings }: ParticleCanvasProps) {
         document.documentElement.scrollHeight - window.innerHeight;
       const targetScrollRatio = scrollHeight > 0 ? scrollTop / scrollHeight : 0;
       currentScrollRatio += (targetScrollRatio - currentScrollRatio) * 0.05;
-      prevScrollRatio = currentScrollRatio;
 
       const isMobile = W < 768;
 

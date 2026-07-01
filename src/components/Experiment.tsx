@@ -44,6 +44,7 @@ export default function Experiment() {
     let scrollTimeout: number | null = null;
     let lastScrollTop = window.scrollY;
     let isTouching = false;
+    let startSection = Math.round(window.scrollY / window.innerHeight);
 
     const triggerSnapCheck = () => {
       if (isTouching) return; // Don't snap while user is touching the screen
@@ -65,9 +66,13 @@ export default function Experiment() {
       if (scrollingDown) {
         // Snaps to next section if scrolled down by more than 20% (0.20)
         targetIndex = fraction > 0.20 ? baseIndex + 1 : baseIndex;
+        // Limit to at most one slide forward from starting slide
+        targetIndex = Math.min(startSection + 1, targetIndex);
       } else {
         // Snaps to previous section if scrolled up by more than 20% (fraction < 0.80)
         targetIndex = fraction < 0.80 ? baseIndex : baseIndex + 1;
+        // Limit to at most one slide backward from starting slide
+        targetIndex = Math.max(startSection - 1, targetIndex);
       }
 
       targetIndex = Math.max(0, Math.min(10, targetIndex));
@@ -92,6 +97,11 @@ export default function Experiment() {
       isMobile = window.innerWidth <= 768;
       if (!isMobile) return;
 
+      // Lock the starting section of the scroll gesture when scrolling begins
+      if (scrollTimeout === null) {
+        startSection = Math.round(scrollTop / window.innerHeight);
+      }
+
       if (scrollTimeout) {
         window.clearTimeout(scrollTimeout);
       }
@@ -102,6 +112,8 @@ export default function Experiment() {
 
     const handleTouchStart = () => {
       isTouching = true;
+      // Record starting section on touch start
+      startSection = Math.round(window.scrollY / window.innerHeight);
     };
 
     const handleTouchEnd = () => {

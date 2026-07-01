@@ -73,6 +73,9 @@ export default function ParticleCanvas({ settings }: ParticleCanvasProps) {
     let lastWidth = window.innerWidth;
     let initialGamma: number | null = null;
     let initialBeta: number | null = null;
+    let cachedLogoX: number | null = null;
+    let cachedLogoY: number | null = null;
+    let cachedSubtextBottom: number | null = null;
 
     // ─── 3D Coordinates Setup ──────────────────────────────────────────────
     const sortedBrain = [...rawParticles.brain].slice(0, PARTICLE_COUNT).map((p) => ({ x: p.x, y: p.y, z: p.z }));
@@ -1189,35 +1192,43 @@ export default function ParticleCanvas({ settings }: ParticleCanvasProps) {
         const subtextEl = document.querySelector('.hero-experiment-wrapper .hero-subtext');
         const heroContentEl = document.querySelector('.hero-experiment-wrapper .hero-content') as HTMLElement;
 
-        let logoX = isMobile ? W * 0.5 : W * 0.25; // fallback center of left 50%
-        let logoY = isMobile ? H * 0.22 : H * 0.5; // fallback center vertically
-        if (logoEl) {
-          const rect = logoEl.getBoundingClientRect();
-          logoX = rect.left + rect.width / 2;
-          logoY = rect.top + rect.height / 2;
-        }
-
         // Bounding boxes for mobile vertical centering
-        // To avoid coordinate feedback loops in requestAnimationFrame:
-        // temporarily reset transform before reading untransformed bounds
-        if (heroContentEl) {
-          heroContentEl.style.transform = '';
+        // To avoid coordinate feedback loops and viewport jumpiness (e.g. Chrome mobile URL bar):
+        // we cache the layout bounds once relative to the static untransformed state,
+        // and calculate offsets mathematically in the frame loop.
+        if (cachedLogoX === null || cachedLogoY === null || cachedSubtextBottom === null) {
+          if (heroContentEl) {
+            heroContentEl.style.transform = '';
+          }
+          if (logoEl) {
+            const rect = logoEl.getBoundingClientRect();
+            cachedLogoX = rect.left + rect.width / 2;
+            cachedLogoY = rect.top + rect.height / 2;
+          } else {
+            cachedLogoX = isMobile ? W * 0.5 : W * 0.25;
+            cachedLogoY = isMobile ? H * 0.22 : H * 0.5;
+          }
+          if (subtextEl) {
+            const rect = subtextEl.getBoundingClientRect();
+            cachedSubtextBottom = rect.bottom;
+          } else {
+            cachedSubtextBottom = H * 0.65;
+          }
         }
 
-        let subtextBottom = H * 0.65; // fallback
-        if (subtextEl) {
-          const rect = subtextEl.getBoundingClientRect();
-          subtextBottom = rect.bottom;
-        }
+        const activeRowsCount = 4 - 2 * shiftUpT;
+        const canvasHeight = activeRowsCount * rowHeight;
+        const domShiftUp = canvasHeight / 2;
 
         // Translate the DOM element on mobile to center the combined DOM + Canvas elements
         if (heroContentEl && isMobile) {
-          const activeRowsCount = 4 - 2 * shiftUpT;
-          const canvasHeight = activeRowsCount * rowHeight;
-          const domShiftUp = canvasHeight / 2;
           heroContentEl.style.transform = `translateY(-${domShiftUp}px)`;
-          subtextBottom -= domShiftUp;
         }
+
+        const currentShift = isMobile ? domShiftUp : 0;
+        const logoX = cachedLogoX;
+        const logoY = cachedLogoY - currentShift;
+        let subtextBottom = cachedSubtextBottom - currentShift;
 
         // Calculate HUD Y position:
         let hudY = 0;
@@ -1577,6 +1588,9 @@ export default function ParticleCanvas({ settings }: ParticleCanvasProps) {
       canvas.width = W * dpr;
       canvas.height = H * dpr;
       ctx.scale(dpr, dpr);
+      cachedLogoX = null;
+      cachedLogoY = null;
+      cachedSubtextBottom = null;
     };
 
     const handleMouseMove = (e: MouseEvent) => {

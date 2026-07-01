@@ -54,8 +54,10 @@ export default function ParticleCanvas({ settings }: ParticleCanvasProps) {
 
     let W = window.innerWidth;
     let H = window.innerHeight;
-    canvas.width = W;
-    canvas.height = H;
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = W * dpr;
+    canvas.height = H * dpr;
+    ctx.scale(dpr, dpr);
 
     const mouse = { x: -1000, y: -1000, active: false };
     let mouseInfluenceX = 0;
@@ -1193,6 +1195,12 @@ export default function ParticleCanvas({ settings }: ParticleCanvasProps) {
         }
 
         // Bounding boxes for mobile vertical centering
+        // To avoid coordinate feedback loops in requestAnimationFrame:
+        // temporarily reset transform before reading untransformed bounds
+        if (heroContentEl) {
+          heroContentEl.style.transform = '';
+        }
+
         let subtextBottom = H * 0.65; // fallback
         if (subtextEl) {
           const rect = subtextEl.getBoundingClientRect();
@@ -1205,24 +1213,21 @@ export default function ParticleCanvas({ settings }: ParticleCanvasProps) {
           const canvasHeight = activeRowsCount * rowHeight;
           const domShiftUp = canvasHeight / 2;
           heroContentEl.style.transform = `translateY(-${domShiftUp}px)`;
+          subtextBottom -= domShiftUp;
         }
 
         // Calculate HUD Y position:
-        // Mobile HUD is anchored above the mobile footer initially, then slides up step-by-step
-        const footerElHud = document.querySelector('.persistent-footer');
-        let footerTop = H - (isMobile ? 42 : 62);
-        if (footerElHud) {
-          const footerRect = footerElHud.getBoundingClientRect();
-          footerTop = footerRect.top;
-        }
-
         let hudY = 0;
         if (isMobile) {
-          // mobile lerps between footer and perfect relative placement below green cards stack
-          const hudY_start = footerTop - 20;
-          const hudY_end = subtextBottom + 12 + 2 * rowHeight + hudHeight / 2;
-          hudY = lerp(hudY_start, hudY_end, (row0AbsorbedT + row1AbsorbedT) / 2);
+          const activeRowsCount = 4 - 2 * shiftUpT;
+          hudY = subtextBottom + 12 + activeRowsCount * rowHeight + hudHeight / 2;
         } else {
+          const footerElHud = document.querySelector('.persistent-footer');
+          let footerTop = H - 62;
+          if (footerElHud) {
+            const footerRect = footerElHud.getBoundingClientRect();
+            footerTop = footerRect.top;
+          }
           hudY = (footerTop - 26) - rowHeight * (row0AbsorbedT + row1AbsorbedT);
         }
 
@@ -1557,8 +1562,9 @@ export default function ParticleCanvas({ settings }: ParticleCanvasProps) {
     const handleResize = () => {
       W = window.innerWidth;
       H = window.innerHeight;
-      canvas.width = W;
-      canvas.height = H;
+      canvas.width = W * dpr;
+      canvas.height = H * dpr;
+      ctx.scale(dpr, dpr);
     };
 
     const handleMouseMove = (e: MouseEvent) => {

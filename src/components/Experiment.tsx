@@ -110,7 +110,7 @@ export default function Experiment() {
                   </div>
                   <img src={theme === "black" ? darkLogo : lightLogo} className="hero-logo" alt="CorvusX Logo" width="380" height="320" />
                   <p className="hero-subtext">
-                    CorvusX delivers real-time, completely undetectable answers directly on your screen—helping you think clearly, solve optimally, and perform with absolute confidence during high-stakes interviews.
+                    CorvusX delivers solutions discreetly, helping you think clearly, solve optimally & perform with absolute confidence.
                   </p>
                 </div>
               </div>

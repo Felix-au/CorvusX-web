@@ -168,9 +168,15 @@
   flex-direction: column;
   gap: 5px;
   padding: 4px;
-  margin-left: auto;
 }
-.bar1,.bar2,.bar3 { display: block; width: 22px; height: 2px; background: var(--text); border-radius: 2px; transition: 0.3s; }
+.bar {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: var(--text);
+  border-radius: 2px;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
 .bar1Open { transform: translateY(7px) rotate(45deg); }
 .bar2Open { opacity: 0; }
 .bar3Open { transform: translateY(-7px) rotate(-45deg); }

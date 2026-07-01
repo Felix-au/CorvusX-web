@@ -99,17 +99,15 @@ export default function Navbar({ isDark: propIsDark, onThemeToggle }: NavbarProp
               )}
             </AnimatePresence>
           </motion.button>
-
-
           {/* Hamburger */}
           <button
             className={styles.hamburger}
             onClick={() => setMenuOpen(v => !v)}
             aria-label="Toggle menu"
           >
-            <span className={menuOpen ? styles.bar1Open : styles.bar1} />
-            <span className={menuOpen ? styles.bar2Open : styles.bar2} />
-            <span className={menuOpen ? styles.bar3Open : styles.bar3} />
+            <span className={`${styles.bar} ${menuOpen ? styles.bar1Open : ''}`} />
+            <span className={`${styles.bar} ${menuOpen ? styles.bar2Open : ''}`} />
+            <span className={`${styles.bar} ${menuOpen ? styles.bar3Open : ''}`} />
           </button>
         </div>
 
@@ -138,11 +136,6 @@ export default function Navbar({ isDark: propIsDark, onThemeToggle }: NavbarProp
               >
                 Download
               </a>
-              <button className={styles.mobileThemeRow} onClick={handleToggle}>
-                {isDark ? <Sun size={15} /> : <Moon size={15} />}
-                {isDark ? 'Switch to Light Theme' : 'Switch to Dark Theme'}
-              </button>
-
             </motion.div>
           )}
         </AnimatePresence>

@@ -933,6 +933,11 @@ html.scroll-snap .experiment-route .section {
     margin: 0;
   }
 
+  .experiment-route .hero-logo {
+    width: 72%;
+    max-width: 342px;
+  }
+
   .experiment-route .persistent-footer {
     bottom: 0;
     padding: 7px 16px;

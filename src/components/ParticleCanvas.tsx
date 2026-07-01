@@ -70,6 +70,9 @@ export default function ParticleCanvas({ settings }: ParticleCanvasProps) {
     let gyroX = 0;
     let gyroY = 0;
     let hasGyro = false;
+    let lastWidth = window.innerWidth;
+    let initialGamma: number | null = null;
+    let initialBeta: number | null = null;
 
     // ─── 3D Coordinates Setup ──────────────────────────────────────────────
     const sortedBrain = [...rawParticles.brain].slice(0, PARTICLE_COUNT).map((p) => ({ x: p.x, y: p.y, z: p.z }));
@@ -1560,6 +1563,15 @@ export default function ParticleCanvas({ settings }: ParticleCanvasProps) {
 
     // ─── Event Listeners ──────────────────────────────────────────────────
     const handleResize = () => {
+      const newWidth = window.innerWidth;
+      const isMobile = window.innerWidth <= 768;
+
+      // On mobile, ignore vertical resizing caused by browser URL bar toggles
+      if (isMobile && newWidth === lastWidth) {
+        return;
+      }
+
+      lastWidth = newWidth;
       W = canvas.clientWidth || window.innerWidth;
       H = canvas.clientHeight || window.innerHeight;
       canvas.width = W * dpr;
@@ -1583,8 +1595,17 @@ export default function ParticleCanvas({ settings }: ParticleCanvasProps) {
       if (!settingsRef.current.gyroEnabled) return;
       if (e.gamma !== null && e.beta !== null) {
         hasGyro = true;
-        const gammaClamped = Math.max(-30, Math.min(30, e.gamma));
-        const betaClamped = Math.max(-30, Math.min(30, e.beta - 60));
+
+        if (initialGamma === null || initialBeta === null) {
+          initialGamma = e.gamma;
+          initialBeta = e.beta;
+        }
+
+        const deltaGamma = e.gamma - initialGamma;
+        const deltaBeta = e.beta - initialBeta;
+
+        const gammaClamped = Math.max(-30, Math.min(30, deltaGamma));
+        const betaClamped = Math.max(-30, Math.min(30, deltaBeta));
 
         gyroX = (gammaClamped / 30) * 0.90 * settingsRef.current.gyroSensitivity;
         gyroY = (betaClamped / 30) * 0.60 * settingsRef.current.gyroSensitivity;

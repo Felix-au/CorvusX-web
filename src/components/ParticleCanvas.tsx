@@ -52,8 +52,8 @@ export default function ParticleCanvas({ settings }: ParticleCanvasProps) {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    let W = window.innerWidth;
-    let H = window.innerHeight;
+    let W = canvas.clientWidth || window.innerWidth;
+    let H = canvas.clientHeight || window.innerHeight;
     const dpr = window.devicePixelRatio || 1;
     canvas.width = W * dpr;
     canvas.height = H * dpr;
@@ -1560,8 +1560,8 @@ export default function ParticleCanvas({ settings }: ParticleCanvasProps) {
 
     // ─── Event Listeners ──────────────────────────────────────────────────
     const handleResize = () => {
-      W = window.innerWidth;
-      H = window.innerHeight;
+      W = canvas.clientWidth || window.innerWidth;
+      H = canvas.clientHeight || window.innerHeight;
       canvas.width = W * dpr;
       canvas.height = H * dpr;
       ctx.scale(dpr, dpr);

@@ -288,6 +288,9 @@ kbd {
 }
 
 @media (max-width: 768px) {
+  .experiment-route .desktop-env-wrapper {
+    margin-top: 15px; /* Reduced downward bias on mobile to maintain vertical centering */
+  }
   .experiment-route .desktop-env-wrapper> :first-child {
     height: 70vh;
   }

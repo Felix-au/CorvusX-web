@@ -293,6 +293,25 @@ kbd {
 }
 
 @media (max-width: 768px) {
+  /* Force slide sections to occupy exactly 100% viewport height and center content on mobile */
+  .experiment-route .section {
+    min-height: 100vh !important;
+    height: 100vh !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 !important;
+  }
+
+  .experiment-route .demo-slide-col {
+    height: auto !important;
+    width: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin: 0 !important;
+  }
+
   .experiment-route .desktop-env-wrapper {
     display: none !important; /* Hide desktop simulation on mobile completely */
   }
@@ -302,7 +321,7 @@ kbd {
     flex-direction: column;
     align-items: center;
     text-align: center;
-    background: rgba(15, 23, 42, 0.55);
+    background: rgba(30, 30, 34, 0.85); /* Dark greyish background (no navy blue tint) */
     backdrop-filter: blur(20px) saturate(180%);
     -webkit-backdrop-filter: blur(20px) saturate(180%);
     border: 1px solid rgba(255, 255, 255, 0.08);

@@ -205,6 +205,7 @@
 .mobileThemeRow {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   padding: 14px 0;
   font-size: 0.9rem;
@@ -285,9 +286,9 @@
     font-size: 0.72rem;
     margin-left: auto;
   }
+
   .themeToggle {
-    display: flex;
-    margin-left: 0;
+    display: none !important;
   }
   .hamburger {
     display: flex;

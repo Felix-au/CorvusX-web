@@ -137,10 +137,10 @@ export default function Experiment() {
                   <span className="mobile-card-icon">🖥️</span>
                   <h2 className="mobile-card-title">Desktop Required</h2>
                   <p className="mobile-card-text">
-                    The interactive demo utilizes global keyboard shortcuts (like <kbd>Ctrl+B</kbd> to launch, <kbd>Ctrl+H</kbd> to scan, and <kbd>Ctrl+Alt+K</kbd> for the Ghost Writer) to simulate the overlay.
+                    The interactive demo utilizes keyboard shortcuts (like <kbd>Ctrl+B</kbd> to launch, <kbd>Ctrl+H</kbd> to scan, and <kbd>Ctrl+Alt+K</kbd> for the Ghost Writer) to simulate.
                   </p>
                   <p className="mobile-card-subtext">
-                    Please visit this page on a desktop computer to try the stealth assistant demo.
+                    Please visit this page on a desktop to try the demo.
                   </p>
                 </div>
               </div>

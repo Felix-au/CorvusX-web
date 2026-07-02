@@ -127,6 +127,10 @@ export default function Navbar({ isDark: propIsDark, onThemeToggle }: NavbarProp
                   {l.label}
                 </a>
               ))}
+              <div className={styles.mobileThemeRow} onClick={() => { handleToggle(); setMenuOpen(false); }}>
+                {isDark ? <Sun size={16} /> : <Moon size={16} />}
+                <span>{isDark ? 'Light Theme' : 'Dark Theme'}</span>
+              </div>
               <a
                 href="https://github.com/Felix-au/CorvusX-Intelligence-in-the-Shadows/releases/latest"
                 className={styles.mobileCta}

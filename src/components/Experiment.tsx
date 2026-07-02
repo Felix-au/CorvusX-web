@@ -72,6 +72,28 @@ export default function Experiment() {
     });
   };
 
+  // Scroll to slide 1 (Demo) on load/hashchange if demo parameters or hash are present
+  useEffect(() => {
+    const handleHashAndSearch = () => {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("demo") === "true" || window.location.hash === "#demo") {
+        setTimeout(() => {
+          scrollToSection(1);
+        }, 300);
+        
+        if (params.get("demo") === "true") {
+          const url = new URL(window.location.href);
+          url.searchParams.delete("demo");
+          window.history.replaceState({}, document.title, url.pathname + url.search + url.hash);
+        }
+      }
+    };
+    
+    handleHashAndSearch();
+    window.addEventListener("hashchange", handleHashAndSearch);
+    return () => window.removeEventListener("hashchange", handleHashAndSearch);
+  }, []);
+
   const shapesMetadata = [
     "Synaptic Brain",
     "Cosmic Scattered",
@@ -108,7 +130,14 @@ export default function Experiment() {
         if (index === 0) {
           return (
             <section key={index} className="section first-slide-container">
-              <Navbar isDark={theme === "black"} onThemeToggle={(dark) => setTheme(dark ? "black" : "white")} />
+              <Navbar 
+                isDark={theme === "black"} 
+                onThemeToggle={(dark) => setTheme(dark ? "black" : "white")} 
+                onDemoClick={(e) => {
+                  e.preventDefault();
+                  scrollToSection(1);
+                }}
+              />
               <div className="hero-experiment-wrapper">
                 <div className="hero-content">
                   <div className="badge-wrapper">

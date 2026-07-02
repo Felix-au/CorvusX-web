@@ -6,9 +6,10 @@ import styles from './Navbar.module.css'
 interface NavbarProps {
   isDark?: boolean
   onThemeToggle?: (dark: boolean) => void
+  onDemoClick?: (e: React.MouseEvent) => void
 }
 
-export default function Navbar({ isDark: propIsDark, onThemeToggle }: NavbarProps) {
+export default function Navbar({ isDark: propIsDark, onThemeToggle, onDemoClick }: NavbarProps) {
   const [scrolled,  setScrolled]  = useState(false)
   const [menuOpen,  setMenuOpen]  = useState(false)
   const [localIsDark, setLocalIsDark] = useState(() => {
@@ -17,14 +18,20 @@ export default function Navbar({ isDark: propIsDark, onThemeToggle }: NavbarProp
   })
 
   const path = window.location.pathname
-  const prefix = path === '/experiment' ? '' : '/experiment'
+  const isExperimentRoute = path === '/experiment'
   const navLinks = [
-    { label: 'Demo',         href: `${prefix}#demo` },
-    { label: 'Features',     href: `${prefix}#features` },
-    { label: 'How it Works', href: `${prefix}#how-it-works` },
-    { label: 'Shortcuts',    href: `${prefix}#shortcuts` },
-    { label: 'FAQ',          href: `${prefix}#faq` },
+    { label: 'Demo',         href: isExperimentRoute ? '/?demo=true' : '#demo' },
+    { label: 'Features',     href: isExperimentRoute ? '#features' : '/experiment#features' },
+    { label: 'How it Works', href: isExperimentRoute ? '#how-it-works' : '/experiment#how-it-works' },
+    { label: 'Shortcuts',    href: isExperimentRoute ? '#shortcuts' : '/experiment#shortcuts' },
+    { label: 'FAQ',          href: isExperimentRoute ? '#faq' : '/experiment#faq' },
   ]
+
+  const handleLinkClick = (label: string, e: React.MouseEvent) => {
+    if (label === 'Demo' && onDemoClick) {
+      onDemoClick(e)
+    }
+  }
 
   const isDark = propIsDark !== undefined ? propIsDark : localIsDark
 
@@ -65,7 +72,9 @@ export default function Navbar({ isDark: propIsDark, onThemeToggle }: NavbarProp
           <ul className={styles.links}>
             {navLinks.map(l => (
               <li key={l.href}>
-                <a href={l.href} className={styles.link}>{l.label}</a>
+                <a href={l.href} className={styles.link} onClick={(e) => handleLinkClick(l.label, e)}>
+                  {l.label}
+                </a>
               </li>
             ))}
           </ul>
@@ -123,7 +132,10 @@ export default function Navbar({ isDark: propIsDark, onThemeToggle }: NavbarProp
             >
               {navLinks.map(l => (
                 <a key={l.href} href={l.href} className={styles.mobileLink}
-                  onClick={() => setMenuOpen(false)}>
+                  onClick={(e) => {
+                    handleLinkClick(l.label, e);
+                    setMenuOpen(false);
+                  }}>
                   {l.label}
                 </a>
               ))}

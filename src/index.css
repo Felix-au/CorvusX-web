@@ -278,7 +278,12 @@ kbd {
   margin-top: 40px; /* Slight downward bias */
 }
 
-/* .desktop itself fills 75vh */
+/* Mobile-only fallback card (hidden by default on desktop) */
+.experiment-route .mobile-demo-card {
+  display: none;
+}
+
+/* .desktop itself fills 80vh */
 .experiment-route .desktop-env-wrapper> :first-child {
   height: 80vh;
   min-height: 400px;
@@ -289,10 +294,113 @@ kbd {
 
 @media (max-width: 768px) {
   .experiment-route .desktop-env-wrapper {
-    margin-top: 15px; /* Reduced downward bias on mobile to maintain vertical centering */
+    display: none !important; /* Hide desktop simulation on mobile completely */
   }
-  .experiment-route .desktop-env-wrapper> :first-child {
-    height: 70vh;
+  
+  .experiment-route .mobile-demo-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    background: rgba(15, 23, 42, 0.55);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: 35px 25px;
+    max-width: 90%;
+    width: 400px;
+    margin: auto;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 
+      0 20px 50px rgba(0, 0, 0, 0.5),
+      inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    animation: fadeSlide 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+  
+  .experiment-route .mobile-card-glow {
+    position: absolute;
+    top: -50px;
+    right: -50px;
+    width: 120px;
+    height: 120px;
+    background: radial-gradient(circle, rgba(99, 102, 241, 0.22) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+  
+  .experiment-route .mobile-card-icon {
+    font-size: 2.2rem;
+    margin-bottom: 12px;
+    z-index: 1;
+    filter: drop-shadow(0 2px 8px rgba(139, 92, 246, 0.3));
+  }
+  
+  .experiment-route .mobile-card-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+    background: linear-gradient(135deg, #ffffff 40%, #c084fc);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    z-index: 1;
+    letter-spacing: -0.01em;
+  }
+  
+  .experiment-route .mobile-card-text {
+    font-size: 0.8rem;
+    line-height: 1.65;
+    color: rgba(255, 255, 255, 0.72);
+    margin-bottom: 20px;
+    z-index: 1;
+  }
+  
+  .experiment-route .mobile-card-text kbd {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #c084fc;
+    font-size: 0.72rem;
+    padding: 1px 4px;
+  }
+
+  .experiment-route .mobile-card-subtext {
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.45);
+    z-index: 1;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    width: 100%;
+    padding-top: 14px;
+  }
+
+  /* Scoped white theme variables for mobile card */
+  .theme-white .experiment-route .mobile-demo-card {
+    background: rgba(255, 255, 255, 0.82);
+    border-color: rgba(15, 23, 42, 0.08);
+    box-shadow: 
+      0 20px 50px rgba(0, 0, 0, 0.08),
+      inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  }
+  
+  .theme-white .experiment-route .mobile-card-title {
+    background: linear-gradient(135deg, #0f172a 40%, #7c3aed);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  
+  .theme-white .experiment-route .mobile-card-text {
+    color: rgba(15, 23, 42, 0.75);
+  }
+  
+  .theme-white .experiment-route .mobile-card-text kbd {
+    background: rgba(15, 23, 42, 0.05);
+    border-color: rgba(15, 23, 42, 0.1);
+    color: #7c3aed;
+  }
+  
+  .theme-white .experiment-route .mobile-card-subtext {
+    color: rgba(15, 23, 42, 0.48);
+    border-top-color: rgba(15, 23, 42, 0.06);
   }
 }
 

@@ -275,11 +275,19 @@
 }
 
 @media (max-width: 768px) {
-  .inner { gap: 12px; }
-  .links, .cta { display: none; }
+  .inner { gap: 8px; }
+  .links { display: none; }
+  .cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 10px;
+    font-size: 0.72rem;
+    margin-left: auto;
+  }
   .themeToggle {
     display: flex;
-    margin-left: auto;
+    margin-left: 0;
   }
   .hamburger {
     display: flex;

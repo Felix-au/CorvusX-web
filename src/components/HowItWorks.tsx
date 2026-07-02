@@ -88,8 +88,8 @@ function MiniLaunch() {
     <MiniWindow title="CorvusX — System Tray">
       <div className={styles.launchIcon}>
         <svg viewBox="0 0 24 24" fill="none" strokeWidth="1.5" style={{ width: 28, height: 28 }}>
-          <defs><linearGradient id="mg" x1="0" y1="0" x2="24" y2="24"><stop stopColor="#00d9c8"/><stop offset="1" stopColor="#7c3aed"/></linearGradient></defs>
-          <path stroke="url(#mg)" d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+          <defs><linearGradient id="mg" x1="0" y1="0" x2="24" y2="24"><stop stopColor="#00d9c8" /><stop offset="1" stopColor="#7c3aed" /></linearGradient></defs>
+          <path stroke="url(#mg)" d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
         </svg>
       </div>
       <div className={styles.miniBadgeRow}>
@@ -112,7 +112,7 @@ function MiniConfig() {
         <div className={styles.miniInput}>AIzaSy••••••••••••</div>
         <div className={styles.miniTestBtn}>✓ Test</div>
       </div>
-      <div className={styles.miniConnected}>✓ Connected — gemini-2.5-flash</div>
+      <div className={styles.miniConnected}>✓ Connected — CorvusX</div>
     </MiniWindow>
   )
 }

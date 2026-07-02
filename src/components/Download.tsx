@@ -41,7 +41,7 @@ export default function Download() {
             </motion.a>
           </div>
 
-          <p className={styles.meta}>Windows 10+ · Electron · Node.js · Gemini 2.5 Flash</p>
+          <p className={styles.meta}>Windows 10+ · Electron · Node.js · CorvusX</p>
         </motion.div>
       </div>
     </section>

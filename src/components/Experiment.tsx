@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import ParticleCanvas from "./ParticleCanvas";
 import { type AppSettings, DEFAULT_SETTINGS } from "../types";
 import Navbar from "./Navbar";
+import DesktopEnv from "./DesktopEnv";
 import lightLogo from "../assets/light.png";
 import darkLogo from "../assets/dark.png";
 
@@ -118,6 +119,18 @@ export default function Experiment() {
                   <p className="hero-subtext">
                     CorvusX delivers solutions discreetly, helping you think clearly, solve optimally & perform with absolute confidence.
                   </p>
+                </div>
+              </div>
+            </section>
+          );
+        }
+        // Slide 1: Cosmic Scattered — Desktop environment demo
+        if (index === 1) {
+          return (
+            <section key={index} className="section" style={{ pointerEvents: "auto", padding: 0 }}>
+              <div className="demo-slide-col">
+                <div className="desktop-env-wrapper">
+                  <DesktopEnv />
                 </div>
               </div>
             </section>

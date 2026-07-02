@@ -1,0 +1,1253 @@
+/* ── Desktop Shell ──────────────────────────────────────────────────────── */
+.desktop {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: #0d1117;
+  border-radius: 12px;
+  user-select: none;
+}
+
+.wallpaper {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 30%, rgba(99, 102, 241, 0.12) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 80% 70%, rgba(34, 211, 238, 0.08) 0%, transparent 60%),
+    linear-gradient(160deg, #0d1117 0%, #0f172a 60%, #0d1117 100%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.desktopIcons {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  z-index: 1;
+}
+
+.desktopIcon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 6px;
+  transition: background 0.15s;
+}
+
+.desktopIcon:hover {
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.desktopIconEmoji {
+  font-size: 1.8rem;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.5));
+}
+
+.desktopIconLabel {
+  font-size: 0.65rem;
+  color: rgba(255, 255, 255, 0.85);
+  text-align: center;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9);
+  max-width: 56px;
+  line-height: 1.2;
+}
+
+/* Arrival badge — shown before first Ctrl+B */
+.arrivalBadge {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: rgba(0, 0, 0, 0.72);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(34, 211, 238, 0.35);
+  border-radius: 99px;
+  font-size: 12px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.88);
+  box-shadow: 0 0 28px rgba(34, 211, 238, 0.18), 0 8px 32px rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+  animation: badgePulse 2.5s ease-in-out infinite;
+  white-space: nowrap;
+}
+@keyframes badgePulse {
+  0%, 100% { box-shadow: 0 0 20px rgba(34,211,238,0.15), 0 8px 32px rgba(0,0,0,0.5); }
+  50%       { box-shadow: 0 0 40px rgba(34,211,238,0.35), 0 8px 32px rgba(0,0,0,0.5); }
+}
+.arrivalBadgeDot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: #22d3ee;
+  box-shadow: 0 0 8px #22d3ee;
+  animation: badgeDotPulse 1.2s ease-in-out infinite;
+  flex-shrink: 0;
+}
+@keyframes badgeDotPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.5; transform: scale(0.75); }
+}
+.arrivalKbd {
+  display: inline-block;
+  padding: 2px 8px;
+  background: rgba(255,255,255,0.14);
+  border: 1px solid rgba(255,255,255,0.22);
+  border-radius: 5px;
+  font-family: 'Segoe UI', monospace;
+  font-size: 11px;
+  color: rgba(255,255,255,0.95);
+}
+
+/* ── Browser Window ──────────────────────────────────────────────────────── */
+.windowWrapper {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  right: 10px;
+  bottom: 42px;
+  z-index: 2;
+  border-radius: 10px;
+  overflow: visible;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.08),
+    0 32px 80px rgba(0, 0, 0, 0.7),
+    0 8px 24px rgba(0, 0, 0, 0.5);
+}
+
+.browser {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: #1e1e1e;
+  overflow: hidden;
+}
+
+/* Title bar */
+.browserTitleBar {
+  display: flex;
+  align-items: center;
+  background: #2c2c2c;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  height: 36px;
+  flex-shrink: 0;
+  padding: 0 8px;
+  gap: 8px;
+}
+
+.winControls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.winBtn {
+  display: block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  opacity: 0.9;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.winBtn:hover {
+  opacity: 1;
+}
+
+.tabStrip {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  flex: 1;
+  overflow: hidden;
+  height: 100%;
+  padding-bottom: 0;
+}
+
+.browserTab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 12px;
+  height: 28px;
+  border-radius: 8px 8px 0 0;
+  background: #1e1e1e;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: none;
+  max-width: 220px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.tabFavicon {
+  font-size: 0.78rem;
+  flex-shrink: 0;
+}
+
+.tabTitle {
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.85);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+}
+
+.tabClose {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.35);
+  cursor: pointer;
+  font-size: 0.8rem;
+  line-height: 1;
+  padding: 0 2px;
+  border-radius: 3px;
+  flex-shrink: 0;
+  transition: color 0.15s, background 0.15s;
+}
+
+.tabClose:hover {
+  color: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.newTabBtn {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.4);
+  cursor: pointer;
+  font-size: 1rem;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s, color 0.15s;
+  flex-shrink: 0;
+}
+
+.newTabBtn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Toolbar */
+.browserToolbar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 10px;
+  background: #252526;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  flex-shrink: 0;
+}
+
+.navBtn {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.55);
+  cursor: pointer;
+  width: 26px;
+  height: 26px;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  transition: background 0.15s, color 0.15s;
+  flex-shrink: 0;
+}
+
+.navBtn:hover {
+  background: rgba(255, 255, 255, 0.07);
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.addressBar {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #1c1c1c;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  padding: 4px 12px;
+  height: 26px;
+  overflow: hidden;
+}
+
+.addressSite {
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 500;
+}
+
+.addressPath {
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.35);
+}
+
+/* Page content */
+.pageContent {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+}
+
+/* ── Codex Layout ───────────────────────────────────────────────────────── */
+.codexLayout {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #1e1e1e;
+}
+
+/* ── Problem Panel ──────────────────────────────────────────────────────── */
+.problemPanel {
+  width: 42%;
+  min-width: 280px;
+  display: flex;
+  flex-direction: column;
+  background: #1e1e1e;
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.codexHeader {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 0 14px;
+  height: 44px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  flex-shrink: 0;
+  background: #010409;
+}
+
+.codexLogo {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.codexLogoIcon {
+  font-size: 1rem;
+}
+
+.codexLogoText {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #f0c040;
+  letter-spacing: -0.01em;
+}
+
+.codexNav {
+  display: flex;
+  gap: 14px;
+  flex: 1;
+}
+
+.codexNavItem {
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.45);
+  cursor: pointer;
+  transition: color 0.15s;
+}
+
+.codexNavItem:hover {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.codexNavActive {
+  color: rgba(255, 255, 255, 0.9) !important;
+  font-weight: 600;
+}
+
+.codexAvatar {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #6366f1, #22d3ee);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.problemHeader {
+  padding: 12px 14px 0;
+  flex-shrink: 0;
+}
+
+.problemTitleRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.problemNum {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.4);
+  font-weight: 500;
+}
+
+.problemName {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.diffBadge {
+  font-size: 0.65rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 99px;
+}
+
+.problemStats {
+  display: flex;
+  gap: 14px;
+  padding-bottom: 4px;
+}
+
+.problemStat {
+  font-size: 0.68rem;
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.problemTabs {
+  display: flex;
+  gap: 2px;
+  padding: 0 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  flex-shrink: 0;
+}
+
+.problemTab {
+  background: none;
+  border: none;
+  padding: 8px 12px;
+  font-size: 0.73rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.4);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.problemTab:hover {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.problemTabActive {
+  color: rgba(255, 255, 255, 0.9) !important;
+  border-bottom-color: #f0c040 !important;
+}
+
+.problemContent {
+  flex: 1;
+  overflow-y: auto;
+  padding: 14px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+}
+
+.problemContent::-webkit-scrollbar {
+  width: 4px;
+}
+
+.problemContent::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+}
+
+.desc {
+  font-size: 0.78rem;
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.72);
+  margin: 0 0 10px;
+}
+
+.desc strong {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.desc em {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.inlineCode {
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 0.73em;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 1px 5px;
+  border-radius: 4px;
+  color: #80cbc4;
+}
+
+.example {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-bottom: 10px;
+}
+
+.exLabel {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.5);
+  margin-bottom: 6px;
+}
+
+.exBody {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.exKey {
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.exVal {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.constraints {
+  margin-top: 10px;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+}
+
+.constraintLabel {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.5);
+  margin-bottom: 6px;
+}
+
+.constraintList {
+  margin: 0;
+  padding: 0 0 0 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.constraintList li {
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.tags {
+  display: flex;
+  gap: 6px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+.tag {
+  font-size: 0.67rem;
+  font-weight: 500;
+  padding: 3px 9px;
+  border-radius: 99px;
+  background: rgba(99, 102, 241, 0.12);
+  border: 1px solid rgba(99, 102, 241, 0.25);
+  color: #a5b4fc;
+}
+
+.hints {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.hint {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+
+.hint p {
+  margin: 4px 0 0;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.65);
+  line-height: 1.6;
+}
+
+.hintNum {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #f0c040;
+}
+
+.noSubmissions {
+  padding: 20px 0;
+  font-size: 0.76rem;
+  color: rgba(255, 255, 255, 0.3);
+  text-align: center;
+}
+
+/* Resize handle */
+.resizeHandle {
+  width: 4px;
+  background: rgba(255, 255, 255, 0.04);
+  cursor: col-resize;
+  flex-shrink: 0;
+  transition: background 0.15s;
+}
+
+.resizeHandle:hover {
+  background: rgba(99, 102, 241, 0.4);
+}
+
+/* ── Editor Panel ───────────────────────────────────────────────────────── */
+.editorPanel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: #1e1e1e;
+  overflow: hidden;
+  min-width: 0;
+  user-select: text;
+}
+
+.editorToolbar {
+  display: flex;
+  align-items: center;
+  padding: 6px 10px;
+  background: #252526;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  flex-shrink: 0;
+  gap: 4px;
+}
+
+.langTabs {
+  display: flex;
+  gap: 2px;
+}
+
+.langTab {
+  background: none;
+  border: none;
+  padding: 4px 10px;
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.4);
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background 0.15s, color 0.15s;
+}
+
+.langTab:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.langTabActive {
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.editorTools {
+  display: flex;
+  gap: 2px;
+}
+
+.editorTool {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.35);
+  cursor: pointer;
+  font-size: 0.75rem;
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s, color 0.15s;
+}
+
+.editorTool:hover {
+  background: rgba(255, 255, 255, 0.07);
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.editor {
+  flex: 1;
+  display: flex;
+  overflow: auto;
+  font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+  font-size: 0.75rem;
+  line-height: 1.6;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+}
+
+.editor::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+.editor::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+}
+
+.editorGutter {
+  display: flex;
+  flex-direction: column;
+  padding: 8px 0;
+  background: #1e1e1e;
+  border-right: 1px solid rgba(255, 255, 255, 0.05);
+  flex-shrink: 0;
+  user-select: none;
+}
+
+.gutterLine {
+  padding: 0 12px;
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.2);
+  text-align: right;
+  line-height: 1.6;
+  min-width: 32px;
+}
+
+.gutterLineActive {
+  color: #c0c0c0 !important;
+}
+
+.editorCode {
+  flex: 1;
+  padding: 8px 0 8px 16px;
+  overflow: visible;
+  white-space: pre;
+  min-width: 0;
+}
+
+.editorLine {
+  display: flex;
+  align-items: baseline;
+  line-height: 1.6;
+  padding-right: 16px;
+  position: relative;
+}
+
+.editorLineActive {
+  background: rgba(255, 255, 255, 0.035);
+  border-radius: 2px;
+}
+
+.caret {
+  display: inline-block;
+  width: 2px;
+  height: 1.1em;
+  background: #569cd6;
+  border-radius: 1px;
+  margin-left: 1px;
+  vertical-align: text-bottom;
+  animation: caretBlink 1s step-end infinite;
+}
+
+@keyframes caretBlink {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0;
+  }
+}
+
+/* Test case bar */
+.testcaseBar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 12px;
+  background: #252526;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  flex-shrink: 0;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  flex-wrap: wrap;
+}
+
+.testcaseLabel {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.5);
+  flex-shrink: 0;
+}
+
+.testcaseInput {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 2px;
+}
+
+/* Footer */
+.editorFooter {
+  display: flex;
+  align-items: center;
+  padding: 6px 12px;
+  background: #252526;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.runBtn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 14px;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.runBtn:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.submitBtn {
+  padding: 5px 18px;
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  border: none;
+  border-radius: 6px;
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.15s, transform 0.1s;
+}
+
+.submitBtn:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+/* ── Taskbar ─────────────────────────────────────────────────────────────── */
+.taskbar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 42px;
+  background: rgba(15, 15, 20, 0.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  gap: 4px;
+  z-index: 10;
+  flex-shrink: 0;
+}
+
+.startBtn {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.8);
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background 0.15s;
+  flex-shrink: 0;
+}
+
+.startBtn:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.searchBar {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 0 12px;
+  height: 30px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  color: rgba(255, 255, 255, 0.35);
+  font-size: 0.72rem;
+  width: 140px;
+  cursor: text;
+  flex-shrink: 0;
+  transition: background 0.15s;
+}
+
+.searchBar:hover {
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.pinnedApps {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.taskbarApp {
+  position: relative;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background 0.15s, color 0.15s;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.taskbarApp:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.taskbarAppActive {
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.taskbarAppDot {
+  position: absolute;
+  bottom: 3px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #22d3ee;
+}
+
+.sysTray {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.trayIcons {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.clock {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 1px;
+  cursor: default;
+}
+
+.clockTime {
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.85);
+  font-weight: 500;
+  line-height: 1;
+}
+
+.clockDate {
+  font-size: 0.62rem;
+  color: rgba(255, 255, 255, 0.45);
+  line-height: 1;
+}
+
+/* ── Description text (half-size variant) ───────────────────────────────── */
+.descSmall {
+  font-size: 14px !important;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.72);
+  margin: 0 0 6px;
+}
+
+.descSmall strong {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.descSmall em {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+/* ── Editable code textarea ─────────────────────────────────────────────── */
+.editorTextarea {
+  flex: 1;
+  width: 100%;
+  min-height: 0;
+  background: #1e1e1e;
+  color: #cdd3de;
+  font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+  font-size: 0.75rem;
+  line-height: 1.6;
+  padding: 8px 16px;
+  border: none;
+  outline: none;
+  resize: none;
+  white-space: pre;
+  overflow: auto;
+  tab-size: 4;
+  caret-color: #569cd6;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+}
+
+.editorTextarea::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+.editorTextarea::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+}
+
+.editorTextarea::selection {
+  background: rgba(86, 156, 214, 0.3);
+}
+
+/* Ghost typing: editor is read-only, subtle visual lock indicator */
+.editorTextareaLocked {
+  cursor: default !important;
+  border-color: rgba(168, 85, 247, 0.4) !important;
+  box-shadow: 0 0 0 1px rgba(168, 85, 247, 0.15) inset !important;
+}
+
+/* ── Output panel ───────────────────────────────────────────────────────── */
+.outputPanel {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 6px 12px;
+  background: #1a1a1a;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  flex-shrink: 0;
+  min-height: 52px;
+  max-height: 90px;
+}
+
+.outputLines {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  overflow-y: auto;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 0.7rem;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+}
+
+.outputLine {
+  color: #a8d8a8;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.outputLineError {
+  color: #f87171 !important;
+}
+
+.outputPlaceholder {
+  color: rgba(255, 255, 255, 0.2);
+  font-size: 0.68rem;
+  font-style: italic;
+}
+
+.outputLinePass {
+  color: #4ade80;
+}
+
+/* ── CorvusX overlay ─────────────────────────────────────────────────────── */
+.overlayContainer {
+  position: absolute;
+  /* Center horizontally, sit near top-center */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 50;
+  width: 660px;
+  max-height: 90%;
+  overflow-y: auto;
+  transition: opacity 0.25s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  scrollbar-width: none;
+  pointer-events: auto;
+}
+.overlayContainer::-webkit-scrollbar { display: none; }
+
+.overlayVisible {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+  pointer-events: auto;
+}
+
+.overlayHidden {
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.94);
+  pointer-events: none;
+}
+
+.taskbarHint {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(20, 20, 30, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(139, 92, 246, 0.3);
+  padding: 5px 14px;
+  border-radius: 30px;
+  animation: taskbarHintPulse 3s ease-in-out infinite;
+  white-space: nowrap;
+  box-shadow: 
+    0 4px 16px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+@keyframes taskbarHintPulse {
+  0%, 100% { 
+    border-color: rgba(139, 92, 246, 0.25); 
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05); 
+  }
+  50% { 
+    border-color: rgba(139, 92, 246, 0.55); 
+    box-shadow: 0 4px 20px rgba(139, 92, 246, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.05); 
+  }
+}
+
+.taskbarHintIcon {
+  font-size: 0.85rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.taskbarHintText {
+  font-size: 0.72rem;
+  color: #e2e8f0;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+}
+
+.taskbarHintKey {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  font-weight: 700;
+  font-style: normal;
+  padding: 2px 6px;
+  background: linear-gradient(180deg, rgba(45, 45, 60, 0.9) 0%, rgba(20, 20, 28, 0.95) 100%);
+  border: 1px solid rgba(139, 92, 246, 0.45);
+  border-radius: 5px;
+  color: #c084fc;
+  line-height: 1;
+  box-shadow: 
+    0 2px 4px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.taskbarHintPlus {
+  font-size: 0.65rem;
+  color: #a78bfa;
+  font-weight: 600;
+  margin: 0 2px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.taskbarHintKeys {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+/* Dual-option hint for the result step */
+.taskbarDualHint {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  white-space: nowrap;
+}
+.taskbarDualHint .taskbarHint {
+  position: static;
+  transform: none;
+  animation: taskbarHintPulse 3s ease-in-out infinite;
+}
+.taskbarDualSep {
+  font-size: 0.68rem;
+  color: #a78bfa;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.8;
+  flex-shrink: 0;
+}
+
+@media (max-width: 600px) {
+  .taskbarHint, .taskbarDualHint {
+    display: none;
+  }
+}

@@ -1226,7 +1226,7 @@ export default function ParticleCanvas({ settings }: ParticleCanvasProps) {
         const currentShift = isMobile ? domShiftUp : 0;
         const logoX = cachedLogoX;
         const logoY = cachedLogoY - currentShift;
-        let subtextBottom = cachedSubtextBottom - currentShift;
+        const subtextBottom = cachedSubtextBottom - currentShift;
 
         // Calculate HUD Y position:
         let hudY = 0;
